@@ -311,38 +311,13 @@ namespace Project314
 #pragma endregion
 }
 
-// Find_Name
-bool findName(char team, string name)
-{
-	for (int i = 0; i < CV_vector.size(); i++) {
-		if (CV_vector[i].getName() == name && CV_vector[i].getTeam == team) {
-			return false;
-		}
-	}
-	for (int i = 0; i < BB_vector.size(); i++) {
-		if (BB_vector[i].getName() == name && BB_vector[i].getTeam == team) {
-			return false;
-		}
-	}
-	for (int i = 0; i < CG_vector.size(); i++) {
-		if (CG_vector[i].getName() == name && CG_vector[i].getTeam == team) {
-			return false;
-		}
-	}
-	for (int i = 0; i < CV_vector.size(); i++) {
-		if (DD_vector[i].getName() == name && DD_vector[i].getTeam == team) {
-			return false;
-		}
-	}
-	return true;
-}
 // SET指令
 bool set(char team, string name, string type, double x, double y) 
 {
 
 	if (type == "CV") {
-		for (int i = 0; i < CV_vector.size(); i++) {
-			if (CV_vector[i].getName() == name && CV_vector[i].getTeam == team) {
+		for (int i = 0; i < Vessel_vector.size(); i++) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam == team) {
 				return false;
 			}
 		}
@@ -350,13 +325,13 @@ bool set(char team, string name, string type, double x, double y)
 		newVessel.setName(name);
 		newVessel.setX(x);
 		newVessel.setY(y);
-		CV_vector.push_back(newVessel);
+		Vessel_vector.push_back(newVessel);
 		return true;
 
 	}
 	else if (type == "BB") {
-		for (int i = 0; i < BB_vector.size(); i++) {
-			if (BB_vector[i].getName() == name && BB_vector[i].getTeam == team) {
+		for (int i = 0; i < Vessel_vector.size(); i++) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam == team) {
 				return false;
 			}
 		}
@@ -364,12 +339,12 @@ bool set(char team, string name, string type, double x, double y)
 		newVessel.setName(name);
 		newVessel.setX(x);
 		newVessel.setY(y);
-		BB_vector.push_back(newVessel);
+		Vessel_vector.push_back(newVessel);
 		return true;
 	}
 	else if (type == "CG") {
-		for (int i = 0; i < CG_vector.size(); i++) {
-			if (CG_vector[i].getName() == name && CG_vector[i].getTeam == team) {
+		for (int i = 0; i < Vessel_vector.size(); i++) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam == team) {
 				return false;
 			}
 		}
@@ -377,12 +352,12 @@ bool set(char team, string name, string type, double x, double y)
 		newVessel.setName(name);
 		newVessel.setX(x);
 		newVessel.setY(y);
-		CG_vector.push_back(newVessel);
+		Vessel_vector.push_back(newVessel);
 		return true;
 	}
 	else if (type == "DD") {
-		for (int i = 0; i < CV_vector.size(); i++) {
-			if (DD_vector[i].getName() == name && DD_vector[i].getTeam == team) {
+		for (int i = 0; i <Vessel_vector.size(); i++) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam == team) {
 				return false;
 			}
 		}
@@ -390,7 +365,7 @@ bool set(char team, string name, string type, double x, double y)
 		newVessel.setName(name);
 		newVessel.setX(x);
 		newVessel.setY(y);
-		DD_vector.push_back(newVessel);
+		Vessel_vector.push_back(newVessel);
 		return true;
 	}
 	else {
@@ -440,13 +415,54 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 int defense(char team, string vessel_name, string shell_name)	//防守艦隊伍、防守艦名字、砲彈名字
 {
 	/*
-		先檢查有沒有這艘船艦，在檢查有沒有這個砲彈
-		return種類：
-		1 = 正常防守, 2 = 沒有這艘船, 3 = 沒有這個砲彈, 4 = 防守CD時間未到, 5 = 防守距離不夠
+	先檢查有沒有這艘船艦，在檢查有沒有這個砲彈
+	return種類：
+	1 = 正常防守, 2 = 沒有這艘船, 3 = 沒有這個砲彈, 4 = 防守CD時間未到, 5 = 防守距離不夠
 	*/
-
+	// 先查Vessel_vector裡有沒有(vessel_name)這個戰艦
+	for (int i = 0; i < Vessel_vector.size(); i++)
+	{
+		//如果找到了這艘船
+		if (Vessel_vector[i].getName() == vessel_name && Vessel_vector[i].getTeam() == team)
+		{
+			// 檢查有沒有(shell_name)這個砲彈
+			for (int j = 0; j < Shell_vector.size(); j++)
+			{
+				// 如果找到這個砲彈，就檢查可不可以防禦(防禦CD到了沒)
+				if (Shell_vector[i].getName() == vessel_name)
+				{
+					if (Vessel_vector[i].getDefCD() == 0
+						&& (distance(Vessel_vector[i].getX(),Vessel_vector[i].getY(),Shell_vector[j].getX(),Shell_vector[j].getY()))
+						<= Vessel_vector[i].getDefRange())	//如果可以防禦
+					{
+						Shell_vector.erase(Shell_vector.begin() + j);
+						return 1;
+					}
+					else
+						return 4;
+				}
+			}
+			// 如果沒找到砲彈
+			return 3;
+		}
+	}
+	//如果找不到這艘戰艦
+	return 2;
 }
-
+//TAG 指令
+bool tag(char team, string old_name, string new_name) {//一個舊名字和一個新名字
+	for (int i = 0; i < Vessel_vector.size(); i++) {
+		if (Vessel_vector[i].getName() == new_name)//先找新名字有沒有衝到
+			return false;
+	}
+	for (int i = 0; i < Vessel_vector.size(); i++) {
+		if (Vessel_vector[i].getName() == old_name) {//再找舊名字存不存在
+			Vessel_vector[i].setName(new_name);
+			return true;
+		}			
+	}
+	return false;
+}
 // MOVE 指令
 
 bool move(char team, string name, double speed, int angle) // 回傳是否找到船艦

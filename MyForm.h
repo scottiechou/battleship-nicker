@@ -4,13 +4,13 @@
 #include <cstdlib>
 #include <vector>
 using std::vector;
-
-static int distance_untiy = 15;		// ¹CÀ¸¶ZÂ÷ªº1³æ¦ì = µøµ¡¤¤ªº15³æ¦ì
-static int acclerate = 15;			// ¹CÀ¸¥[³t"acclerate"­¿
-static int minute = 0, second = 0;	// ¥Î©ó¬ö¿ı¹CÀ¸®É¶¡
-static int log_line = 0;			// ¾Ô°«¤é»xªº¦æ¼Æ
-static vector<Vessel> Vessel_vector;// Àx¦s¦U¦¡Vessel
-static vector<Shell> Shell_vector;	// Àx¦s¦U¦¡Shell
+nigga
+static int distance_untiy = 15;		// éŠæˆ²è·é›¢çš„1å–®ä½ = è¦–çª—ä¸­çš„15å–®ä½
+static int acclerate = 15;			// éŠæˆ²åŠ é€Ÿ"acclerate"å€
+static int minute = 0, second = 0;	// ç”¨æ–¼ç´€éŒ„éŠæˆ²æ™‚é–“
+static int log_line = 0;			// æˆ°é¬¥æ—¥èªŒçš„è¡Œæ•¸
+static vector<Vessel> Vessel_vector;// å„²å­˜å„å¼Vessel
+static vector<Shell> Shell_vector;	// å„²å­˜å„å¼Shell
 
 bool set(char team, string name, string type, double x, double y);
 int fire(char team, string name, double x, double y);
@@ -27,7 +27,7 @@ namespace Project314
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
-		// MyForm«Øºc¤¸
+		// MyFormå»ºæ§‹å…ƒ
 		MyForm(void)
 		{
 			// distance_untiy = 15;
@@ -36,7 +36,7 @@ namespace Project314
 		}
 
 	protected:
-		// MyForm¸Ñºc¤¸
+		// MyFormè§£æ§‹å…ƒ
 		~MyForm()
 		{
 			if (components)
@@ -44,21 +44,21 @@ namespace Project314
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::Label^  commands_text_title;	// ¥Î©ó¼Ğ¥Ücommands(«ü¥O¿é¤J°Ï)ªº¤å¦r¤è¶ô
-	private: System::Windows::Forms::TextBox^  commands_A;	// A²Õªº«ü¥O¿é¤J°Ï
-	private: System::Windows::Forms::TextBox^  commands_B;	// B²Õªº«ü¥O¿é¤J°Ï
-	private: System::Windows::Forms::PictureBox^  pictureBox1;	// ¥Î©ó¦bmyForm.h¤¤¼Ğ°O¦a¹Ï¤j¤p¡AµL·N
-	private: System::Windows::Forms::Label^  battle_log_title;	// ¾Ô°«¤é»x¼ĞÃD
-	private: System::Windows::Forms::Label^  battle_log;		// ¾Ô°«¤é»x¥»¤å
-	private: System::Windows::Forms::Button^  start_botton;	// ¶}©lÁä
-	private: System::Windows::Forms::Button^  pause_botton;	// ¼È°±Áä
-	private: System::Windows::Forms::Timer^  game_timer;	// ­pºâ®É¶¡
-	private: System::Windows::Forms::Label^  time;		// Åã¥Ü®É¶¡
+	private: System::Windows::Forms::Label^  commands_text_title;	// ç”¨æ–¼æ¨™ç¤ºcommands(æŒ‡ä»¤è¼¸å…¥å€)çš„æ–‡å­—æ–¹å¡Š
+	private: System::Windows::Forms::TextBox^  commands_A;	// Açµ„çš„æŒ‡ä»¤è¼¸å…¥å€
+	private: System::Windows::Forms::TextBox^  commands_B;	// Bçµ„çš„æŒ‡ä»¤è¼¸å…¥å€
+	private: System::Windows::Forms::PictureBox^  pictureBox1;	// ç”¨æ–¼åœ¨myForm.hä¸­æ¨™è¨˜åœ°åœ–å¤§å°ï¼Œç„¡æ„
+	private: System::Windows::Forms::Label^  battle_log_title;	// æˆ°é¬¥æ—¥èªŒæ¨™é¡Œ
+	private: System::Windows::Forms::Label^  battle_log;		// æˆ°é¬¥æ—¥èªŒæœ¬æ–‡
+	private: System::Windows::Forms::Button^  start_botton;	// é–‹å§‹éµ
+	private: System::Windows::Forms::Button^  pause_botton;	// æš«åœéµ
+	private: System::Windows::Forms::Timer^  game_timer;	// è¨ˆç®—æ™‚é–“
+	private: System::Windows::Forms::Label^  time;		// é¡¯ç¤ºæ™‚é–“
 	private: System::ComponentModel::IContainer^  components;
 
-#pragma region ªì©l¤Æ¦U¶µ¤u¨ã(¤¸¥ó)(InitializeComponent)
+#pragma region åˆå§‹åŒ–å„é …å·¥å…·(å…ƒä»¶)(InitializeComponent)
 	private:
-		/*****ªì©l¤Æ¦U¶µ¤u¨ã(¤¸¥ó)*****/
+		/*****åˆå§‹åŒ–å„é …å·¥å…·(å…ƒä»¶)*****/
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
@@ -87,12 +87,12 @@ namespace Project314
 			// commands_text_title
 			// 
 			this->commands_text_title->AutoSize = true;
-			this->commands_text_title->Font = (gcnew System::Drawing::Font(L"·s²Ó©úÅé", 10));
+			this->commands_text_title->Font = (gcnew System::Drawing::Font(L"æ–°ç´°æ˜é«”", 10));
 			this->commands_text_title->Location = System::Drawing::Point(551, 15);
 			this->commands_text_title->Name = L"commands_text_title";
 			this->commands_text_title->Size = System::Drawing::Size(109, 20);
 			this->commands_text_title->TabIndex = 1;
-			this->commands_text_title->Text = L"«ü¥O¿é¤J°Ï";
+			this->commands_text_title->Text = L"æŒ‡ä»¤è¼¸å…¥å€";
 			// 
 			// commands_A
 			// 
@@ -113,40 +113,40 @@ namespace Project314
 			// battle_log_title
 			// 
 			this->battle_log_title->AutoSize = true;
-			this->battle_log_title->Font = (gcnew System::Drawing::Font(L"·s²Ó©úÅé", 10));
+			this->battle_log_title->Font = (gcnew System::Drawing::Font(L"æ–°ç´°æ˜é«”", 10));
 			this->battle_log_title->Location = System::Drawing::Point(856, 15);
 			this->battle_log_title->Name = L"battle_log_title";
 			this->battle_log_title->Size = System::Drawing::Size(89, 20);
 			this->battle_log_title->TabIndex = 4;
-			this->battle_log_title->Text = L"¾Ô°«¤é»x";
+			this->battle_log_title->Text = L"æˆ°é¬¥æ—¥èªŒ";
 			// 
 			// start_botton
 			// 
-			this->start_botton->Font = (gcnew System::Drawing::Font(L"·s²Ó©úÅé", 10));
+			this->start_botton->Font = (gcnew System::Drawing::Font(L"æ–°ç´°æ˜é«”", 10));
 			this->start_botton->Location = System::Drawing::Point(187, 471);
 			this->start_botton->Name = L"start_botton";
 			this->start_botton->Size = System::Drawing::Size(104, 52);
 			this->start_botton->TabIndex = 5;
-			this->start_botton->Text = L"¶}©l";
+			this->start_botton->Text = L"é–‹å§‹";
 			this->start_botton->UseVisualStyleBackColor = true;
 			this->start_botton->Click += gcnew System::EventHandler(this, &MyForm::start_botton_Click);
 			// 
 			// pause_botton
 			// 
-			this->pause_botton->Font = (gcnew System::Drawing::Font(L"·s²Ó©úÅé-ExtB", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->pause_botton->Font = (gcnew System::Drawing::Font(L"æ–°ç´°æ˜é«”-ExtB", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->pause_botton->Location = System::Drawing::Point(311, 471);
 			this->pause_botton->Name = L"pause_botton";
 			this->pause_botton->Size = System::Drawing::Size(98, 52);
 			this->pause_botton->TabIndex = 6;
-			this->pause_botton->Text = L"¼È°±";
+			this->pause_botton->Text = L"æš«åœ";
 			this->pause_botton->UseVisualStyleBackColor = true;
 			this->pause_botton->Click += gcnew System::EventHandler(this, &MyForm::pause_botton_Click);
 			// 
 			// battle_log
 			// 
 			this->battle_log->AutoSize = true;
-			this->battle_log->Font = (gcnew System::Drawing::Font(L"·s²Ó©úÅé", 9));
+			this->battle_log->Font = (gcnew System::Drawing::Font(L"æ–°ç´°æ˜é«”", 9));
 			this->battle_log->Location = System::Drawing::Point(744, 47);
 			this->battle_log->Name = L"battle_log";
 			this->battle_log->Size = System::Drawing::Size(0, 18);
@@ -182,7 +182,7 @@ namespace Project314
 			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->commands_A);
 			this->Name = L"MyForm";
-			this->Text = L"§Y®É¾Ô²¤¹CÀ¸FERTIG - ²Ä14²Õ";
+			this->Text = L"å³æ™‚æˆ°ç•¥éŠæˆ²FERTIG - ç¬¬14çµ„";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
@@ -190,12 +190,12 @@ namespace Project314
 
 		}
 #pragma endregion
-#pragma region ¹CÀ¸ªì©l¤Æ®É¡Aµøµ¡¤W­n¥[¸üªºªF¦è(MyForm_Load)
+#pragma region éŠæˆ²åˆå§‹åŒ–æ™‚ï¼Œè¦–çª—ä¸Šè¦åŠ è¼‰çš„æ±è¥¿(MyForm_Load)
 	private:
-		// ¹CÀ¸ªì©l¤Æ®É¡Aµøµ¡¤W­n¥[¸üªºªF¦è
+		// éŠæˆ²åˆå§‹åŒ–æ™‚ï¼Œè¦–çª—ä¸Šè¦åŠ è¼‰çš„æ±è¥¿
 		System::Void MyForm_Load(System::Object^  sender, System::EventArgs^  e)
 		{
-			// «Ø¥ß¹CÀ¸¦a¹Ï(20*20ªº¤è®æ)¡A¨Ã¥[¸ü¨ì¹CÀ¸µøµ¡¤W
+			// å»ºç«‹éŠæˆ²åœ°åœ–(20*20çš„æ–¹æ ¼)ï¼Œä¸¦åŠ è¼‰åˆ°éŠæˆ²è¦–çª—ä¸Š
 			array<System::Windows::Forms::Label^>^ labels;
 			array<System::Windows::Forms::Label^>^ labelsV;
 			labels = gcnew array<System::Windows::Forms::Label^>(21);
@@ -217,24 +217,24 @@ namespace Project314
 				labelsV[i]->Size = System::Drawing::Size(1, 300);
 				labelsV[i]->AutoSize = false;
 			}
-			for (int i = 0; i < 21; i++)	// ±N¦a¹Ï²K¥[¨ìµøµ¡(Controls)¤W
+			for (int i = 0; i < 21; i++)	// å°‡åœ°åœ–æ·»åŠ åˆ°è¦–çª—(Controls)ä¸Š
 			{
 				this->Controls->Add(labels[i]);
 				this->Controls->Add(labelsV[i]);
 			}
 		}
 #pragma endregion
-#pragma region ¶}©l/¼È°±Áä³]©w
+#pragma region é–‹å§‹/æš«åœéµè¨­å®š
 	private:
 		System::Void start_botton_Click(System::Object^  sender, System::EventArgs^  e)
 		{
-			if (this->game_timer->Enabled == false)	//Á×§K­«½Æ«ö¨ì¶}©lÁä
+			if (this->game_timer->Enabled == false)	//é¿å…é‡è¤‡æŒ‰åˆ°é–‹å§‹éµ
 			{
-				this->game_timer->Enabled = true;	//®É¶¡¶}©l
-				commands_A->Enabled = false;	//°±¤î¿é¤J«ü¥O
+				this->game_timer->Enabled = true;	//æ™‚é–“é–‹å§‹
+				commands_A->Enabled = false;	//åœæ­¢è¼¸å…¥æŒ‡ä»¤
 				commands_B->Enabled = false;
-				// ¿é¥X¶}©l°T¸¹
-				System::String ^Min, ^Sec;	//±N®É¶¡Âà¦¨String«¬ºA«á¦A¿é¥X
+				// è¼¸å‡ºé–‹å§‹è¨Šè™Ÿ
+				System::String ^Min, ^Sec;	//å°‡æ™‚é–“è½‰æˆStringå‹æ…‹å¾Œå†è¼¸å‡º
 				Min = System::Convert::ToString(minute);
 				Sec = System::Convert::ToString(second);
 				if (Min->Length < 2)
@@ -250,7 +250,7 @@ namespace Project314
 					battle_log->Text += "[" + Min + ":" + Sec + "] Game Start\n";
 					log_line++;
 				}
-				// ³B²zcommand_A©Mcommand_B
+				// è™•ç†command_Aå’Œcommand_B
 
 			}
 		}
@@ -263,8 +263,8 @@ namespace Project314
 				commands_A->Enabled = true;
 				commands_B->Enabled = true;
 
-				// ¿é¥X¼È°±°T¸¹
-				// ±N®É¶¡Âà¦¨String«¬ºA
+				// è¼¸å‡ºæš«åœè¨Šè™Ÿ
+				// å°‡æ™‚é–“è½‰æˆStringå‹æ…‹
 				System::String ^Min, ^Sec;
 				Min = System::Convert::ToString(minute);
 				Sec = System::Convert::ToString(second);
@@ -284,7 +284,7 @@ namespace Project314
 			}
 		}
 #pragma endregion
-#pragma region ¹CÀ¸­p®É¾¹
+#pragma region éŠæˆ²è¨ˆæ™‚å™¨
 	private:
 		System::Void game_timer_Tick(System::Object^  sender, System::EventArgs^  e)
 		{
@@ -294,7 +294,7 @@ namespace Project314
 				minute++;
 				second = 0;
 			}
-			// ±NintÂà¦¨String
+			// å°‡intè½‰æˆString
 			System::String ^Min, ^Sec;
 			Min = System::Convert::ToString(minute);
 			Sec = System::Convert::ToString(second);
@@ -302,7 +302,7 @@ namespace Project314
 				Min = "0" + Min;
 			if (Sec->Length < 2)
 				Sec = "0" + Sec;
-			// ¿é¥X®É¶¡
+			// è¼¸å‡ºæ™‚é–“
 			time->Text = (Min + ":" + Sec);
 
 		}
@@ -335,7 +335,7 @@ bool findName(char team, string name)
 	}
 	return true;
 }
-// SET«ü¥O
+// SETæŒ‡ä»¤
 bool set(char team, string name, string type, double x, double y) 
 {
 
@@ -397,80 +397,80 @@ bool set(char team, string name, string type, double x, double y)
 	}
 }
 
-// FIRE«ü¥O
-int fire(char team, string name, double x, double y)	//§ğÀ»Ä¥¶¤¥î¡B§ğÀ»Ä¥¦W¦r¡B§ğÀ»®y¼Ğ
+// FIREæŒ‡ä»¤
+int fire(char team, string name, double x, double y)	//æ”»æ“Šè‰¦éšŠä¼ã€æ”»æ“Šè‰¦åå­—ã€æ”»æ“Šåº§æ¨™
 {
 	/*
-		¥ıÀË¬d¦³¨S¦³³o¿´²îÄ¥¡A¦bÀË¬d¥i¤£¥i¥Hµo®g(CD®É¶¡¨ì¤F¨S)¡A³Ì«áreturnµo®g±¡§Î
-		returnºØÃş¡G
-		1 = ¥¿±`µo®g, 2 = CD®É¶¡ÁÙ¨S¨ì, 3 = ¨S¦³³o¿´²î
+		å…ˆæª¢æŸ¥æœ‰æ²’æœ‰é€™è‰˜èˆ¹è‰¦ï¼Œåœ¨æª¢æŸ¥å¯ä¸å¯ä»¥ç™¼å°„(CDæ™‚é–“åˆ°äº†æ²’)ï¼Œæœ€å¾Œreturnç™¼å°„æƒ…å½¢
+		returnç¨®é¡ï¼š
+		1 = æ­£å¸¸ç™¼å°„, 2 = CDæ™‚é–“é‚„æ²’åˆ°, 3 = æ²’æœ‰é€™è‰˜èˆ¹
 	*/
-	//¬dCV_vector¸Ì¦³¨S¦³³o­Ó¾ÔÄ¥
+	//æŸ¥CV_vectorè£¡æœ‰æ²’æœ‰é€™å€‹æˆ°è‰¦
 	for (int i = 0; i < CV_vector.size(); i++)	
 	{
-		if (CV_vector[i].getName() == name && CV_vector[i].getTeam() == team)	//¦pªG§ä¨ì¤F³o¿´²î
+		if (CV_vector[i].getName() == name && CV_vector[i].getTeam() == team)	//å¦‚æœæ‰¾åˆ°äº†é€™è‰˜èˆ¹
 		{
-			if (CV_vector[i].getAtkCD() == 0)	//¦pªG¥i¥Hµo®g
+			if (CV_vector[i].getAtkCD() == 0)	//å¦‚æœå¯ä»¥ç™¼å°„
 			{
-				CV_vector[i].setAtkCD(CV_ATT_CD);	//±NCD®É¶¡­«³]
-				Shell newShell(name, x, y, CV_vector[i].getWeaponSpeed(), CV_vector[i].getWeaponAtt());	//·s¼W¯¥¼u
+				CV_vector[i].setAtkCD(CV_ATT_CD);	//å°‡CDæ™‚é–“é‡è¨­
+				Shell newShell(name, x, y, CV_vector[i].getWeaponSpeed(), CV_vector[i].getWeaponAtt());	//æ–°å¢ç ²å½ˆ
 				Shell_vector.push_back(newShell);
 				return 1;
 			}
-			else	//¦pªGCD®É¶¡ÁÙ¨S¨ì¡A´N¦^¶Ç±¡§Î2
+			else	//å¦‚æœCDæ™‚é–“é‚„æ²’åˆ°ï¼Œå°±å›å‚³æƒ…å½¢2
 				return 2;
 		}
 	}
-	//¬dBB_vector¸Ì¦³¨S¦³³o­Ó¾ÔÄ¥
+	//æŸ¥BB_vectorè£¡æœ‰æ²’æœ‰é€™å€‹æˆ°è‰¦
 	for (int i = 0; i < BB_vector.size(); i++)	
 	{
-		if (BB_vector[i].getAtkCD() == 0)	//¦pªG¥i¥Hµo®g
+		if (BB_vector[i].getAtkCD() == 0)	//å¦‚æœå¯ä»¥ç™¼å°„
 		{
-			BB_vector[i].setAtkCD(BB_ATT_CD);	//±NCD®É¶¡­«³]
-			Shell newShell(name, x, y, BB_vector[i].getWeaponSpeed(), BB_vector[i].getWeaponAtt());	//·s¼W¯¥¼u
+			BB_vector[i].setAtkCD(BB_ATT_CD);	//å°‡CDæ™‚é–“é‡è¨­
+			Shell newShell(name, x, y, BB_vector[i].getWeaponSpeed(), BB_vector[i].getWeaponAtt());	//æ–°å¢ç ²å½ˆ
 			Shell_vector.push_back(newShell);
 			return 1;
 		}
-		else	//¦pªGCD®É¶¡ÁÙ¨S¨ì¡A´N¦^¶Ç±¡§Î2
+		else	//å¦‚æœCDæ™‚é–“é‚„æ²’åˆ°ï¼Œå°±å›å‚³æƒ…å½¢2
 			return 2;
 	}
-	//¬dCG_vector¸Ì¦³¨S¦³³o­Ó¾ÔÄ¥
+	//æŸ¥CG_vectorè£¡æœ‰æ²’æœ‰é€™å€‹æˆ°è‰¦
 	for (int i = 0; i < CG_vector.size(); i++)	
 	{
-		if (CG_vector[i].getName() == name && CG_vector[i].getTeam() == team)	//¦pªG§ä¨ì¤F³o¿´²î
+		if (CG_vector[i].getName() == name && CG_vector[i].getTeam() == team)	//å¦‚æœæ‰¾åˆ°äº†é€™è‰˜èˆ¹
 		{
-			CG_vector[i].setAtkCD(CG_ATT_CD);	//±NCD®É¶¡­«³]
-			Shell newShell(name, x, y, CG_vector[i].getWeaponSpeed(), CG_vector[i].getWeaponAtt());	//·s¼W¯¥¼u
+			CG_vector[i].setAtkCD(CG_ATT_CD);	//å°‡CDæ™‚é–“é‡è¨­
+			Shell newShell(name, x, y, CG_vector[i].getWeaponSpeed(), CG_vector[i].getWeaponAtt());	//æ–°å¢ç ²å½ˆ
 			Shell_vector.push_back(newShell);
 			return 1;
 		}
-		else	//¦pªGCD®É¶¡ÁÙ¨S¨ì¡A´N¦^¶Ç±¡§Î2
+		else	//å¦‚æœCDæ™‚é–“é‚„æ²’åˆ°ï¼Œå°±å›å‚³æƒ…å½¢2
 			return 2;
 	}
-	//¬dDD_vector¸Ì¦³¨S¦³³o­Ó¾ÔÄ¥
+	//æŸ¥DD_vectorè£¡æœ‰æ²’æœ‰é€™å€‹æˆ°è‰¦
 	for (int i = 0; i < DD_vector.size(); i++)	
 	{
-		if (DD_vector[i].getName() == name && DD_vector[i].getTeam() == team)	//¦pªG§ä¨ì¤F³o¿´²î
+		if (DD_vector[i].getName() == name && DD_vector[i].getTeam() == team)	//å¦‚æœæ‰¾åˆ°äº†é€™è‰˜èˆ¹
 		{
-			DD_vector[i].setAtkCD(DD_ATT_CD);	//±NCD®É¶¡­«³]
-			Shell newShell(name, x, y, DD_vector[i].getWeaponSpeed(), DD_vector[i].getWeaponAtt());	//·s¼W¯¥¼u
+			DD_vector[i].setAtkCD(DD_ATT_CD);	//å°‡CDæ™‚é–“é‡è¨­
+			Shell newShell(name, x, y, DD_vector[i].getWeaponSpeed(), DD_vector[i].getWeaponAtt());	//æ–°å¢ç ²å½ˆ
 			Shell_vector.push_back(newShell);
 			return 1;
 		}
-		else	//¦pªGCD®É¶¡ÁÙ¨S¨ì¡A´N¦^¶Ç±¡§Î2
+		else	//å¦‚æœCDæ™‚é–“é‚„æ²’åˆ°ï¼Œå°±å›å‚³æƒ…å½¢2
 			return 2;
 	}
 
-	return 3;	//¦pªG§ä¤£¨ì³o¿´¾ÔÄ¥¡A´N¦^¶Ç±¡§Î3
+	return 3;	//å¦‚æœæ‰¾ä¸åˆ°é€™è‰˜æˆ°è‰¦ï¼Œå°±å›å‚³æƒ…å½¢3
 }
 
-// DEFENSE«ü¥O
-int defense(char team, string vessel_name, string shell_name)	//¨¾¦uÄ¥¶¤¥î¡B¨¾¦uÄ¥¦W¦r¡B¯¥¼u¦W¦r
+// DEFENSEæŒ‡ä»¤
+int defense(char team, string vessel_name, string shell_name)	//é˜²å®ˆè‰¦éšŠä¼ã€é˜²å®ˆè‰¦åå­—ã€ç ²å½ˆåå­—
 {
 	/*
-		¥ıÀË¬d¦³¨S¦³³o¿´²îÄ¥¡A¦bÀË¬d¦³¨S¦³³o­Ó¯¥¼u
-		returnºØÃş¡G
-		1 = ¥¿±`¨¾¦u, 2 = ¨S¦³³o¿´²î, 3 = ¨S¦³³o­Ó¯¥¼u, 4 = ¨¾¦uCD®É¶¡¥¼¨ì, 5 = ¨¾¦u¶ZÂ÷¤£°÷
+		å…ˆæª¢æŸ¥æœ‰æ²’æœ‰é€™è‰˜èˆ¹è‰¦ï¼Œåœ¨æª¢æŸ¥æœ‰æ²’æœ‰é€™å€‹ç ²å½ˆ
+		returnç¨®é¡ï¼š
+		1 = æ­£å¸¸é˜²å®ˆ, 2 = æ²’æœ‰é€™è‰˜èˆ¹, 3 = æ²’æœ‰é€™å€‹ç ²å½ˆ, 4 = é˜²å®ˆCDæ™‚é–“æœªåˆ°, 5 = é˜²å®ˆè·é›¢ä¸å¤ 
 	*/
 
 }

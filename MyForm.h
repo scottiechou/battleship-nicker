@@ -3,6 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <vector>
+#include <stringstream>
 using std::vector;
 
 static int distance_untiy = 15;		// 遊戲距離的1單位 = 視窗中的15單位
@@ -405,15 +406,26 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 		return種類：
 		1 = 正常發射, 2 = CD時間還沒到, 3 = 沒有這艘船
 	*/
-	//查CV_vector裡有沒有這個戰艦
-	for (int i = 0; i < CV_vector.size(); i++)	
+	//查Vessel_vector裡有沒有這個戰艦
+	for (int i = 0; i < Vessel_vector.size(); i++)	
 	{
-		if (CV_vector[i].getName() == name && CV_vector[i].getTeam() == team)	//如果找到了這艘船
+		if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team)	//如果找到了這艘船
 		{
-			if (CV_vector[i].getAtkCD() == 0)	//如果可以發射
+			if (Vessel_vector[i].getAtkCD() == 0)	//如果可以發射
 			{
-				CV_vector[i].setAtkCD(CV_ATT_CD);	//將CD時間重設
-				Shell newShell(name, x, y, CV_vector[i].getWeaponSpeed(), CV_vector[i].getWeaponAtt());	//新增砲彈
+				//將CD時間重設
+				if (Vessel_vector[i].getType == "CV")	
+					Vessel_vector[i].setAtkCD(CV_ATT_CD);
+				else if (Vessel_vector[i].getType == "BB")
+					Vessel_vector[i].setAtkCD(BB_ATT_CD);
+				else if (Vessel_vector[i].getType == "CG")
+					Vessel_vector[i].setAtkCD(CG_ATT_CD);
+				else if (Vessel_vector[i].getType == "DD")
+					Vessel_vector[i].setAtkCD(DD_ATT_CD);
+				char shell_num = rand() % 256;
+				string shell_name = "Shell_";
+				shell_name += shell_num;
+				Shell newShell("Shell", Vessel_vector[i].getX(), Vessel_vector[i].getX(), x, y, Vessel_vector[i].getWeaponSpeed(), Vessel_vector[i].getWeaponAtt());	//新增砲彈
 				Shell_vector.push_back(newShell);
 				return 1;
 			}
@@ -421,46 +433,6 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 				return 2;
 		}
 	}
-	//查BB_vector裡有沒有這個戰艦
-	for (int i = 0; i < BB_vector.size(); i++)	
-	{
-		if (BB_vector[i].getAtkCD() == 0)	//如果可以發射
-		{
-			BB_vector[i].setAtkCD(BB_ATT_CD);	//將CD時間重設
-			Shell newShell(name, x, y, BB_vector[i].getWeaponSpeed(), BB_vector[i].getWeaponAtt());	//新增砲彈
-			Shell_vector.push_back(newShell);
-			return 1;
-		}
-		else	//如果CD時間還沒到，就回傳情形2
-			return 2;
-	}
-	//查CG_vector裡有沒有這個戰艦
-	for (int i = 0; i < CG_vector.size(); i++)	
-	{
-		if (CG_vector[i].getName() == name && CG_vector[i].getTeam() == team)	//如果找到了這艘船
-		{
-			CG_vector[i].setAtkCD(CG_ATT_CD);	//將CD時間重設
-			Shell newShell(name, x, y, CG_vector[i].getWeaponSpeed(), CG_vector[i].getWeaponAtt());	//新增砲彈
-			Shell_vector.push_back(newShell);
-			return 1;
-		}
-		else	//如果CD時間還沒到，就回傳情形2
-			return 2;
-	}
-	//查DD_vector裡有沒有這個戰艦
-	for (int i = 0; i < DD_vector.size(); i++)	
-	{
-		if (DD_vector[i].getName() == name && DD_vector[i].getTeam() == team)	//如果找到了這艘船
-		{
-			DD_vector[i].setAtkCD(DD_ATT_CD);	//將CD時間重設
-			Shell newShell(name, x, y, DD_vector[i].getWeaponSpeed(), DD_vector[i].getWeaponAtt());	//新增砲彈
-			Shell_vector.push_back(newShell);
-			return 1;
-		}
-		else	//如果CD時間還沒到，就回傳情形2
-			return 2;
-	}
-
 	return 3;	//如果找不到這艘戰艦，就回傳情形3
 }
 

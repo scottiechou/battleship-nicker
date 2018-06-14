@@ -3,7 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <vector>
-#include <stringstream>
+#include <sstream>
 using std::vector;
 
 static int distance_untiy = 15;		// 遊戲距離的1單位 = 視窗中的15單位

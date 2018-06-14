@@ -446,3 +446,33 @@ int defense(char team, string vessel_name, string shell_name)	//防守艦隊伍�
 	*/
 
 }
+
+// MOVE 指令
+
+bool move(char team, string name, double speed, int angle) // 回傳是否找到船艦
+{
+	bool getVessel = false;
+	unsigned int p ; //記錄在Vector 中哪一個位置
+	for (unsigned int i = 0; i < Vessel_vector.size(); i++)
+	{
+		if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team)
+		{
+			getVessel = true;  p = i;
+		}
+
+		if (getVessel)
+		{
+			if (speed > Vessel_vector[p].getMaxSpeed())//超出船艦最大速度的話
+				Vessel_vector[p].setSpeed(Vessel_vector[p].getMaxSpeed());
+			else
+				Vessel_vector[p].setSpeed(speed);
+			 
+			if (angle >= 360)//輸入超過360度就把他mod
+				angle %= 360;
+
+			Vessel_vector[p].setAngle(angle);
+		}	
+	}
+	return getVessel;
+}
+

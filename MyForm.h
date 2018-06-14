@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <vector>
 using std::vector;
-nigga
+
 static int distance_untiy = 15;		// 遊戲距離的1單位 = 視窗中的15單位
 static int acclerate = 15;			// 遊戲加速"acclerate"倍
 static int minute = 0, second = 0;	// 用於紀錄遊戲時間

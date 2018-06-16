@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 using std::vector;
+using std::stringstream;
 
 static int distance_untiy = 15;		// 遊戲距離的1單位 = 視窗中的15單位
 static int acclerate = 15;			// 遊戲加速"acclerate"倍
@@ -442,6 +443,7 @@ int defense(char team, string vessel_name, string shell_name)	//防守艦隊伍�
 	//如果找不到這艘戰艦
 	return 2;
 }
+
 //TAG 指令
 bool tag(char team, string old_name, string new_name) {//一個舊名字和一個新名字
 	for (int i = 0; i < Vessel_vector.size(); i++) {
@@ -456,8 +458,8 @@ bool tag(char team, string old_name, string new_name) {//一個舊名字和一�
 	}
 	return false;
 }
-// MOVE 指令
 
+// MOVE 指令
 bool move(char team, string name, double speed, int angle) // 回傳是否找到船艦
 {
 	bool getVessel = false;

@@ -32,7 +32,7 @@ double Vessel::getHp()
 
 double Vessel::getSpeed()
 {
-	return this->speed;
+	return this->currentSpeed;
 }
 
 double Vessel::getAtkRange()

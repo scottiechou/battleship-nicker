@@ -377,38 +377,31 @@ bool set(char team, string name, string type, double x, double y)
 int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊艦名字、攻擊座標
 {
 	/*
-		先檢查有沒有這艘船艦，在檢查可不可以發射(CD時間到了沒)，最後return發射情形
+		(1)先檢查有沒有這艘船艦與，(2)在檢查可不可以發射(CD時間到了沒)，最後return發射情形
 		return種類：
 		1 = 正常發射, 2 = CD時間還沒到, 3 = 沒有這艘船
 	*/
-	//查Vessel_vector裡有沒有這個戰艦
+	// (1)檢查Vessel_vector裡有沒有這個戰艦
 	for (int i = 0; i < Vessel_vector.size(); i++)	
 	{
-		if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team)	//如果找到了這艘船
+		// (2)如果找到了這艘船，就檢查能不能發射(CD時間到了沒)
+		if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team)
 		{
-			if (Vessel_vector[i].getAtkCD() == 0)	//如果可以發射
+			if (Vessel_vector[i].getAtkCD() == 0)	// 如果CD時間到了(可以發射)
 			{
-				//將CD時間重設
-				if (Vessel_vector[i].getType == "CV")	
-					Vessel_vector[i].setAtkCD(CV_ATT_CD);
-				else if (Vessel_vector[i].getType == "BB")
-					Vessel_vector[i].setAtkCD(BB_ATT_CD);
-				else if (Vessel_vector[i].getType == "CG")
-					Vessel_vector[i].setAtkCD(CG_ATT_CD);
-				else if (Vessel_vector[i].getType == "DD")
-					Vessel_vector[i].setAtkCD(DD_ATT_CD);
-				char shell_num = rand() % 256;
-				string shell_name = "Shell_";
-				shell_name += shell_num;
-				Shell newShell("Shell", Vessel_vector[i].getX(), Vessel_vector[i].getX(), x, y, Vessel_vector[i].getWeaponSpeed(), Vessel_vector[i].getWeaponAtt());	//新增砲彈
+				stringstream pivot;
+				pivot << "Shell_" << team << Shell_vector.size() + 1;
+				string shell_name;
+				pivot >> shell_name;
+				Shell newShell(shell_name, Vessel_vector[i].getX(), Vessel_vector[i].getY(), x, y, Vessel_vector[i].getWeaponSpeed(), Vessel_vector[i].getWeaponAtt());
 				Shell_vector.push_back(newShell);
 				return 1;
 			}
-			else	//如果CD時間還沒到，就回傳情形2
+			else	// 如果CD時間還沒到(不能發射)
 				return 2;
 		}
 	}
-	return 3;	//如果找不到這艘戰艦，就回傳情形3
+	return 3;	// 如果找不到這艘戰艦
 }
 
 // DEFENSE指令

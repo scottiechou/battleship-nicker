@@ -70,6 +70,11 @@ string Vessel::getType()
 	return this->type;
 }
 
+double Vessel::getMaxSpeed()
+{
+	return this->maxSpeed;
+}
+
 string Shell::getName()
 {
 	return this->name;
@@ -82,6 +87,7 @@ double Shell::getY()
 {
 	return this->y;
 }
+
 #pragma endregion
 #pragma region set()
 void Vessel::setHp(double hp)
@@ -91,7 +97,7 @@ void Vessel::setHp(double hp)
 
 void Vessel::setSpeed(double speed)
 {
-	this->speed = speed;
+	this->currentSpeed = speed;
 }
 
 void Vessel::setAtkRange(double atkRange)
@@ -137,6 +143,11 @@ void Vessel::setX(double x)
 void Vessel::setY(double y)
 {
 	this->y = y;
+}
+
+void Vessel::setAngle(int angle)
+{
+	this->angle = angle;
 }
 
 void Shell::setX(double x)

@@ -333,7 +333,7 @@ bool set(char team, string name, string type, double x, double y)
 	}
 	else if (type == "BB") {
 		for (int i = 0; i < Vessel_vector.size(); i++) {
-			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam == team) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team) {
 				return false;
 			}
 		}
@@ -346,7 +346,7 @@ bool set(char team, string name, string type, double x, double y)
 	}
 	else if (type == "CG") {
 		for (int i = 0; i < Vessel_vector.size(); i++) {
-			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam == team) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team) {
 				return false;
 			}
 		}
@@ -359,7 +359,7 @@ bool set(char team, string name, string type, double x, double y)
 	}
 	else if (type == "DD") {
 		for (int i = 0; i <Vessel_vector.size(); i++) {
-			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam == team) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team) {
 				return false;
 			}
 		}

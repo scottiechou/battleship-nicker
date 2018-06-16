@@ -164,7 +164,8 @@ void Shell::setY(double y)
 CV::CV()
 {
 	hp = 5;
-	speed = 1;
+	maxSpeed = 1;
+	currentSpeed = 0;
 	atkRange = 25;
 	atkCD = 0;
 	defRange = 5;
@@ -172,12 +173,14 @@ CV::CV()
 	weaponSpeed = (4 / 60);
 	weaponAtt = 3;
 	type = "CV";
+	angle = 0;
 }
 
 BB::BB()
 {
 	hp = 4;
-	speed = 1;
+	maxSpeed = 1;
+	currentSpeed = 0;
 	atkRange = 20;
 	atkCD = 0;
 	defRange = 10;
@@ -185,12 +188,15 @@ BB::BB()
 	weaponSpeed = (2 / 60);
 	weaponAtt = 3;
 	type = "BB";
+	angle = 0;
+}
 }
 
 CG::CG()
 {
 	hp = 3;
-	speed = 2;
+	maxSpeed = 2;
+	currentSpeed = 0;
 	atkRange = 15;
 	atkCD = 0;
 	defRange = 15;
@@ -198,12 +204,15 @@ CG::CG()
 	weaponSpeed = (3 / 60);
 	weaponAtt = 2;
 	type = "CG";
+	angle = 0;
+}
 }
 
 DD::DD()
 {
 	hp = 2;
-	speed = 3;
+	maxSpeed = 3;
+	currentSpeed = 0;
 	atkRange = 10;
 	atkCD = 0;
 	defRange = 20;
@@ -211,6 +220,8 @@ DD::DD()
 	weaponSpeed = (3 / 60);
 	weaponAtt = 1;
 	type = "DD";
+	angle = 0;
+}
 }
 // Shell的建構子
 Shell::Shell(string name, double x, double y, double destination_X, double destination_Y, double speed, double attack)

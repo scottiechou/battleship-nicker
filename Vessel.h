@@ -3,12 +3,12 @@
 #include <vector>
 #include <string>
 
-// ²îÄ¥§ğÀ»CD
+// èˆ¹è‰¦æ”»æ“ŠCD
 #define CV_ATT_CD 60
 #define BB_ATT_CD 30
 #define CG_ATT_CD 30
 #define DD_ATT_CD 15
-// ²îÄ¥¨¾¿mCD
+// èˆ¹è‰¦é˜²ç¦¦CD
 #define CV_DEF_CD 15
 #define BB_DEF_CD 30
 #define CG_DEF_CD 30
@@ -78,9 +78,15 @@ public:
 class Shell
 {
 private:
-	string name;	//¯¥¼u¦W¦r
-	double x, y;	//¯¥¼u¦ì¸m
-	double speed, attack;	//¯¥¼u³t«×¡B§ğÀ»
+	string name;	//ç ²å½ˆåå­—
+	double x, y;	//ç ²å½ˆç›®å‰ä½ç½®
+	double destination_X, destination_Y;	//ç ²å½ˆç›®çš„åœ°
+	double speed, attack;	//ç ²å½ˆé€Ÿåº¦ã€æ”»æ“Š
 public:
-	Shell(string name, double x, double y, double speed, double attack);
+	Shell(string name, double x, double y, double destination_X, double destination_Y, double speed, double attack);
+	string getName();
+	double getX();
+	double getY();
+	void setX(double x);
+	void setY(double y);
 };

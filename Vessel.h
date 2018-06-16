@@ -22,8 +22,9 @@ protected:
 	string name;
 	char team;
 	double x, y;
-	double hp, speed, atkRange, defRange, atkCD, defCD;
+	double hp, speed, atkRange, defRange, atkCD, defCD,maxSpeed,currentSpeed;
 	double weaponSpeed, weaponAtt;
+	int angle;
 public:
 	// get()
 	string getName();
@@ -38,6 +39,7 @@ public:
 	double getDefCD();
 	double getWeaponSpeed();
 	double getWeaponAtt();
+	double getMaxSpeed();
 
 	// set()
 	void setTeam(char team);
@@ -52,7 +54,8 @@ public:
 	void setName(string name);
 	void setX(double x);
 	void setY(double y);
-
+	void setSpeed(double speed);
+	void setAngle(int angle);
 };
 class CV : public Vessel 
 {

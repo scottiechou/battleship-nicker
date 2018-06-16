@@ -22,7 +22,7 @@ protected:
 	string name;
 	char team;
 	double x, y;
-	double hp, speed, atkRange, defRange, atkCD, defCD,maxSpeed,currentSpeed;
+	double hp, maxSpeed, atkRange, defRange, atkCD, defCD,maxSpeed,currentSpeed;
 	double weaponSpeed, weaponAtt;
 	int angle;
 public:

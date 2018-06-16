@@ -16,6 +16,7 @@ static vector<Shell> Shell_vector;	// 儲存各式Shell
 
 bool set(char team, string name, string type, double x, double y);
 int fire(char team, string name, double x, double y);
+double distance(double x1, double y1, double x2, double y2);//距離
 
 namespace Project314
 {
@@ -372,6 +373,9 @@ bool set(char team, string name, string type, double x, double y)
 	else {
 		return false;
 	}
+}
+inline double distance(double x1, double y1, double x2, double y2) {//距離
+	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
 
 // FIRE指令

@@ -47,6 +47,9 @@ namespace Project314
 				delete components;
 			}
 		}
+		
+		void commandOperation(String^ cmd, char team);
+		
 	private: System::Windows::Forms::Label^  commands_text_title;	// 用於標示commands(指令輸入區)的文字方塊
 	private: System::Windows::Forms::TextBox^  commands_A;	// A組的指令輸入區
 	private: System::Windows::Forms::TextBox^  commands_B;	// B組的指令輸入區
@@ -311,6 +314,212 @@ namespace Project314
 		}
 	};
 #pragma endregion
+}
+
+void  Project314::MyForm::commandOperation(String^ cmd, char team)
+{
+		String^ cmdType = "";//命令種類
+		int pointer = 0;//指標
+
+		
+
+		while (cmd[pointer] != ' ')
+		{
+			cmdType += cmd[pointer];
+			pointer++;
+		}
+
+        if (cmd[pointer] == ' ') pointer++; //第一次遇到空白
+
+		if (cmdType->ToUpper == "SET")
+		{
+			String^ vesselName = "";
+			String^ type = "";
+			String^ coordinate = "";
+			double x, y;
+
+			while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
+			}
+
+			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理type
+
+			while (cmd[pointer] != ' ')
+			{
+				type += cmd[pointer];
+				pointer;
+			}
+
+			if (cmd[pointer] == ' ') pointer++; //第三次遇到空白，這次處理位置
+
+			while (cmd[pointer] == ')')
+			{
+				if (cmd[pointer] == '(') pointer++;
+
+				while (cmd[pointer] != ',')
+				{
+					coordinate += cmd[pointer];
+					pointer++;
+				}
+
+				if (cmd[pointer] == ',')
+				{
+					pointer++;
+					x = System::Convert::ToDouble(coordinate);
+					coordinate = "";
+				}
+
+				while (cmd[pointer] != ')')
+				{
+					coordinate += cmd[pointer];
+					pointer++;
+				}
+
+				y = System::Convert::ToDouble(coordinate);
+				coordinate = "";
+
+			}
+
+			set(team, vesselName, type, x, y);
+
+		}
+
+		else if (cmdType->ToUpper == "FIRE")
+		{
+			String^ vesselName;
+			String^ coordinate;
+
+			double x, y;
+
+			while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
+			}
+
+			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理coordinate
+
+			while (cmd[pointer] == ')')  //(x,y)
+			{
+				if (cmd[pointer] == '(') pointer++;  //處理(x,
+
+				while (cmd[pointer] != ',')
+				{
+					coordinate += cmd[pointer];
+					pointer++;
+				}
+
+				if (cmd[pointer] == ',')
+				{
+					pointer++;
+					x = System::Convert::ToDouble(coordinate);
+					coordinate = "";
+				}
+
+				while (cmd[pointer] != ')')  //處理 y)
+				{
+					coordinate += cmd[pointer];
+					pointer++;
+				}
+
+				y = System::Convert::ToDouble(coordinate);
+				coordinate = "";
+			}
+
+			fire(team, vesselName, x, y);
+		}
+
+		else if (cmdType->ToUpper == "DEFENSE")
+		{
+			String^ vesselName = "";
+			String^ shellName = "";
+
+			while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
+			}
+
+			if (cmd[pointer] != ' ')  pointer++;
+
+			while (cmd[pointer] != ' ' || cmd[pointer] != '\0')
+			{
+				shellName += cmd[pointer];
+				pointer++;
+			}
+
+			defense(team, vesselName, shellName);
+		}
+
+		else if (cmdType->ToUpper == "MOVE")
+		{
+			String^ vesselName;
+			String^ speed;
+			String^ angle;
+
+                        while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
+			}
+			
+			while (cmd[pointer] != ' ')
+			{
+				speed += cmd[pointer];
+				pointer++;
+			}
+
+			if (cmd[pointer] == ' ') pointer++;
+
+			while (cmd[pointer] != ' ' && cmd[pointer] != '\0')
+			{
+				angle += cmd[pointer];
+				pointer++;
+			}
+
+			toSpeed = System::Convert::ToDouble(speed);
+			toAngle = System::Convert::ToInt32(angle);
+
+			move(team, vesselName, toSpeed, toAngle);
+
+		}
+
+		else if (cmdType->ToUpper == "TAG")
+		{
+			String^ vesselName;
+			String^ newName;
+			
+			while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
+			}
+
+			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理type
+
+			while (cmd[pointer] != ' ')
+			{
+				newName += cmd[pointer];
+				pointer;
+			}
+
+			tag(team, vesselName, newName);
+		}
+
+		else
+		{
+			battle_log->Text += ("Command : " + cmd + " is invalid.\n");
+			log_line++;
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+				battle_log->Text += ("Command : " + cmd + " is invalid.\n");
+				log_line++;
+			}
+		}
 }
 
 // SET指令

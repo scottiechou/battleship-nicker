@@ -64,6 +64,24 @@ double Vessel::getWeaponAtt()
 {
 	return this->weaponAtt;
 }
+
+string Vessel::getType()
+{
+	return this->type;
+}
+
+string Shell::getName()
+{
+	return this->name;
+}
+double Shell::getX()
+{
+	return this->x;
+}
+double Shell::getY()
+{
+	return this->y;
+}
 #pragma endregion
 #pragma region set()
 void Vessel::setHp(double hp)
@@ -120,8 +138,18 @@ void Vessel::setY(double y)
 {
 	this->y = y;
 }
+
+void Shell::setX(double x)
+{
+	this->x = x;
+}
+
+void Shell::setY(double y)
+{
+	this->y = y;
+}
 #pragma endregion
-#pragma region «Øºc¤l
+#pragma region å»ºæ§‹å­
 CV::CV()
 {
 	hp = 5;
@@ -132,6 +160,7 @@ CV::CV()
 	defCD = 0;
 	weaponSpeed = (4 / 60);
 	weaponAtt = 3;
+	type = "CV";
 }
 
 BB::BB()
@@ -144,6 +173,7 @@ BB::BB()
 	defCD = 0;
 	weaponSpeed = (2 / 60);
 	weaponAtt = 3;
+	type = "BB";
 }
 
 CG::CG()
@@ -156,6 +186,7 @@ CG::CG()
 	defCD = 0;
 	weaponSpeed = (3 / 60);
 	weaponAtt = 2;
+	type = "CG";
 }
 
 DD::DD()
@@ -168,13 +199,16 @@ DD::DD()
 	defCD = 0;
 	weaponSpeed = (3 / 60);
 	weaponAtt = 1;
+	type = "DD";
 }
-// Shellªº«Øºc¤l
-Shell::Shell(string name, double x, double y, double speed, double attack)
+// Shellçš„å»ºæ§‹å­
+Shell::Shell(string name, double x, double y, double destination_X, double destination_Y, double speed, double attack)
 {
 	this->name = name;
 	this->x = x;
 	this->y = y;
+	this->destination_X = destination_X;
+	this->destination_Y = destination_Y;
 	this->speed = speed;
 	this->attack = attack;
 }

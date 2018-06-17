@@ -236,7 +236,7 @@ namespace Project314
 		{
 			if (this->game_timer->Enabled == false)	//避免重複按到開始鍵
 			{
-				this->game_timer->Enabled = true;	//時間開始
+
 				commands_A->Enabled = false;	//停止輸入指令
 				commands_B->Enabled = false;
 				// 輸出開始訊號
@@ -257,6 +257,67 @@ namespace Project314
 					log_line++;
 				}
 				// 處理command_A和command_B
+				
+				vector<String^> cmdA, cmdB;
+				String^ tempCmd = "";
+
+				int i = 0;
+				int layer_A = 0; //第幾層command
+				int layer_B = 0;
+
+				while (i < this->commands_A->Text->Length)
+				{
+					while (commands_A->Text[i] != '\n')
+					{
+						tempCmd += commands_A->Text[i];
+						i++;
+					}
+
+					if (commands_A->Text[i] == '\n')
+					{
+						cmdA.push_back(tempCmd);
+						tempCmd = ""; //清空
+						i++;
+					}
+
+				}
+
+				i = 0;
+
+				while (i < this->commands_B->Text->Length)
+				{
+					while (commands_B->Text[i] != '\n')
+					{
+						tempCmd += commands_B->Text[i];
+						i++;
+					}
+
+					if (commands_B->Text[i] == '\n')
+					{
+						cmdB.push_back(tempCmd);
+						tempCmd = "";
+						i++;
+					}
+				}
+
+				while (1)
+				{
+					if (layer_A >= cmdA.size() && layer_B >= cmdB.size())
+						break;
+
+					if (layer_A < cmdA.size())
+					{
+						commandOperation(cmdA[layer_A], 'A');
+						layer_A++;
+					}
+					if (layer_B < cmdB.size())
+					{
+						commandOperation(cmdB[layer_B], 'B');
+						layer_B++;
+					}
+				}
+
+				this->game_timer->Enabled = true;	//時間開始
 
 			}
 		}

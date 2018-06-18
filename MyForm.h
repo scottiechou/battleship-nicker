@@ -3,11 +3,12 @@
 #include <ctime>
 #include <cstdlib>
 #include <vector>
+#include <cliext/vector>
 #include <sstream>
 using std::vector;
 using std::stringstream;
 
-static double distance_untiy = 22.5;		// 遊戲距離的1單位 = 視窗中的22.5單位
+static double distance_untiy = 15;		// 遊戲距離的1單位 = 視窗中的15單位
 static int acclerate = 15;			// 遊戲加速"acclerate"倍
 static int minute = 0, second = 0;	// 用於紀錄遊戲時間
 static int log_line = 0;			// 戰鬥日誌的行數
@@ -15,8 +16,11 @@ static vector<Vessel> Vessel_vector;// 儲存各式Vessel
 static vector<Shell> Shell_vector;	// 儲存各式Shell
 
 bool set(char team, string name, string type, double x, double y);
+double distance(double x1, double y1, double x2, double y2);	//測量(x1, y1)與(x2, y2)距離
 int fire(char team, string name, double x, double y);
-double distance(double x1, double y1, double x2, double y2);//距離
+int defense(char team, string vessel_name, string shell_name);
+bool tag(char team, string old_name, string new_name);
+bool move(char team, string name, double speed, int angle);
 
 namespace Project314
 {
@@ -26,6 +30,7 @@ namespace Project314
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Collections::Generic;
 
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
@@ -47,6 +52,9 @@ namespace Project314
 				delete components;
 			}
 		}
+		
+		void commandOperation(string cmd, char team);
+
 	private: System::Windows::Forms::Label^  commands_text_title;	// 用於標示commands(指令輸入區)的文字方塊
 	private: System::Windows::Forms::TextBox^  commands_A;	// A組的指令輸入區
 	private: System::Windows::Forms::TextBox^  commands_B;	// B組的指令輸入區
@@ -58,6 +66,8 @@ namespace Project314
 	private: System::Windows::Forms::Timer^  game_timer;	// 計算時間
 	private: System::Windows::Forms::Label^  time;		// 顯示時間
 	private: System::ComponentModel::IContainer^  components;
+	private: List<System::Windows::Forms::Label^>^ Vessel_Label;// 將船艦顯示到螢幕上所用的label
+	private: List<System::Windows::Forms::Label^>^ Shell_Label;	// 將砲彈顯示到螢幕上所用的label
 
 #pragma region 初始化各項工具(元件)(InitializeComponent)
 	private:
@@ -75,6 +85,8 @@ namespace Project314
 			this->battle_log = (gcnew System::Windows::Forms::Label());
 			this->game_timer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->time = (gcnew System::Windows::Forms::Label());
+			this->Vessel_Label = gcnew List<System::Windows::Forms::Label^>;
+			this->Shell_Label = gcnew List<System::Windows::Forms::Label^>;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -254,7 +266,60 @@ namespace Project314
 					log_line++;
 				}
 				// 處理command_A和command_B
+				vector<string> cmdA, cmdB;
+				string tempCmd = "";
+				int i = 0;
+				int layer_A = 0; //第幾層command 
+				int layer_B = 0;
 
+				while (i < this->commands_A->Text->Length)
+				{
+					while (commands_A->Text[i] != '\n' && i < commands_A->Text->Length)
+					{
+						tempCmd += commands_A->Text[i];
+						i++;
+					}
+					if (commands_A->Text[i] == '\n' || i == commands_A->Text->Length)
+					{
+						cmdA.push_back(tempCmd);
+						tempCmd = ""; //清空 
+						i++;
+					}
+				}
+				i = 0;
+				while (i < this->commands_B->Text->Length)
+				{
+					while (commands_B->Text[i] != '\n' && i < commands_B->Text->Length)
+					{
+						tempCmd += commands_B->Text[i];
+						i++;
+					}
+					if (commands_B->Text[i] == '\n' || i == commands_B->Text->Length)
+					{
+						cmdB.push_back(tempCmd);
+						tempCmd = "";
+						i++;
+					}
+				}
+
+				while (1)
+				{
+					if (layer_A >= cmdA.size() && layer_B >= cmdB.size())
+						break;
+					if (layer_A < cmdA.size())
+					{
+						commandOperation(cmdA[layer_A], 'A');
+						layer_A++;
+					}
+					if (layer_B < cmdB.size())
+					{
+						commandOperation(cmdB[layer_B], 'B');
+						layer_B++;
+					}
+				}
+				commands_A->Text = "";
+				commands_B->Text = "";
+				this->game_timer->Enabled = true;	//時間開始
 			}
 		}
 	private:
@@ -291,26 +356,419 @@ namespace Project314
 	private:
 		System::Void game_timer_Tick(System::Object^  sender, System::EventArgs^  e)
 		{
+			// 計算遊戲時間
 			second++;
 			if (second == 60)
 			{
 				minute++;
 				second = 0;
 			}
-			// 將int轉成String
-			System::String ^Min, ^Sec;
+			System::String ^Min, ^Sec;	//將int(minute, second)轉成String(Min, Sec)
 			Min = System::Convert::ToString(minute);
 			Sec = System::Convert::ToString(second);
 			if (Min->Length < 2)
 				Min = "0" + Min;
 			if (Sec->Length < 2)
 				Sec = "0" + Sec;
-			// 輸出時間
-			time->Text = (Min + ":" + Sec);
+			time->Text = (Min + ":" + Sec);	//輸出時間
+
+			// 更新船艦的CD時間
+			for (int i = 0; i < Vessel_vector.size(); i++)
+			{
+				Vessel_vector[i].setAtkCD(Vessel_vector[i].getAtkCD() - 1);
+				Vessel_vector[i].setDefCD(Vessel_vector[i].getDefCD() - 1);
+			}
 
 		}
-	};
+	private: System::Void commands_text_title_Click(System::Object^  sender, System::EventArgs^  e) {
+	}
+};
 #pragma endregion
+}
+
+void Project314::MyForm::commandOperation(string cmd, char team)
+{
+	String^ cmdType = "";//命令種類
+	string tempS;
+	int pointer = 0;//指標
+	System::String ^Min, ^Sec;	// 將時間轉成String型態，用於battle_log輸出
+	Min = System::Convert::ToString(minute);
+	Sec = System::Convert::ToString(second);
+	if (Min->Length < 2)
+		Min = "0" + Min;
+	if (Sec->Length < 2)
+		Sec = "0" + Sec;
+
+	while (cmd[pointer] != ' ')	//01:25更改
+	{
+		tempS += cmd[pointer];
+		pointer++;
+	}
+	cmdType = gcnew String(tempS.c_str());	//01:25更改
+	tempS.clear();
+
+	if (cmd[pointer] == ' ')
+		pointer++; //第一次遇到空白
+
+	// 如果指令是SET
+	if (cmdType->ToUpper() == "SET")
+	{
+		string vesselName = "";
+		string type = "";
+		String^ coordinate = "";
+		double x, y;
+
+		while (cmd[pointer] != ' ')
+		{
+			vesselName += cmd[pointer];
+			pointer++;
+		}
+
+		if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理type
+
+		while (cmd[pointer] != ' ')
+		{
+			type += cmd[pointer];
+			pointer++;
+		}
+
+		if (cmd[pointer] == ' ') pointer++; //第三次遇到空白，這次處理位置
+
+		while (cmd[pointer] != ')')
+		{
+			if (cmd[pointer] == '(') pointer++;
+
+			while (cmd[pointer] != ',')
+			{
+				tempS += cmd[pointer];
+				pointer++;
+			}
+
+			if (cmd[pointer] == ',')
+			{
+				pointer++;
+				coordinate = gcnew String(tempS.c_str());
+				x = System::Convert::ToDouble(coordinate);
+				coordinate = "";
+				tempS.clear();
+			}
+
+			while (cmd[pointer] != ')')
+			{
+				tempS += cmd[pointer];
+				pointer++;
+			}
+
+			coordinate = gcnew String(tempS.c_str());
+			y = System::Convert::ToDouble(coordinate);
+			coordinate = "";
+			tempS.clear();
+
+		}
+
+		// 將船艦顯示到螢幕上
+		System::String ^vesselName_String, ^type_String;
+		vesselName_String = gcnew String(vesselName.c_str());
+		type_String = gcnew String(type.c_str());
+		Char team_Char = team;
+		if (set(team, vesselName, type, x, y))	// 如果成功設置
+		{
+			System::Windows::Forms::Label^ newVesselLabel;
+			newVesselLabel = (gcnew System::Windows::Forms::Label());
+			if (team == 'A')
+				newVesselLabel->ForeColor = System::Drawing::Color::Red;
+			else if (team == 'B')
+				newVesselLabel->ForeColor = System::Drawing::Color::Blue;
+			//newVesselLabel->BackColor = System::Drawing::Color::Navy;
+			newVesselLabel->Location = System::Drawing::Point(10 + x * distance_untiy, 10 + y * distance_untiy);
+			newVesselLabel->Text = "▲" + vesselName_String;
+			newVesselLabel->AutoSize = true;
+			Vessel_Label->Add(newVesselLabel);
+			int lastLabel = Vessel_vector.size() - 1;
+			this->Controls->Add(Vessel_Label[lastLabel]);
+
+			// Battle Log (戰鬥指令對應輸出)
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += "Team" + team_Char + " SET " + vesselName_String + " with " + type_String;
+			battle_log->Text += " at (" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+			battle_log->Text += " -> Success\n";
+			log_line++;
+		}
+		else
+		{
+			// Battle Log (戰鬥指令對應輸出)
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += "Team" + team_Char + " SET " + vesselName_String + " with " + type_String;
+			battle_log->Text += " at (" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+			battle_log->Text += " -> Fail\n";
+			log_line++;
+		}
+	}
+	// 如果指令是FIRE
+	else if (cmdType->ToUpper() == "FIRE")
+	{
+		string vesselName;
+		String^ coordinate;
+
+		double x, y;
+
+		while (cmd[pointer] != ' ')
+		{
+			vesselName += cmd[pointer];
+			pointer++;
+		}
+
+		if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理coordinate
+
+		while (cmd[pointer] == ')')  //(x,y)
+		{
+			if (cmd[pointer] == '(') pointer++;  //處理(x,
+
+			while (cmd[pointer] != ',')
+			{
+				coordinate += cmd[pointer];
+				pointer++;
+			}
+
+			if (cmd[pointer] == ',')
+			{
+				pointer++;
+				x = System::Convert::ToDouble(coordinate);
+				coordinate = "";
+			}
+
+			while (cmd[pointer] != ')')  //處理 y)
+			{
+				coordinate += cmd[pointer];
+				pointer++;
+			}
+
+			y = System::Convert::ToDouble(coordinate);
+			coordinate = "";
+		}
+		// 將砲彈顯示在螢幕上
+		switch (fire(team, vesselName, x, y))
+		{
+			System::String ^vesselName_String, ^shellName_String;
+			vesselName_String = gcnew String(vesselName.c_str());
+			shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
+		case 1:
+		{
+			System::Windows::Forms::Label^ newShellLabel;
+			newShellLabel = gcnew System::Windows::Forms::Label();
+			newShellLabel->ForeColor = System::Drawing::Color::Black;
+			newShellLabel->Location = System::Drawing::Point(15 + x * distance_untiy, 15 + y * distance_untiy);
+			newShellLabel->Text = "·" + shellName_String;
+			newShellLabel->AutoSize = false;
+			Shell_Label->Add(newShellLabel);
+			int lastShell = Shell_vector.size() - 1;
+			this->Controls->Add(Shell_Label[lastShell]);
+
+			// Battle Log (戰鬥指令對應輸出)
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += "Team" + team + vesselName_String + " FIRE to ";
+			battle_log->Text += "(" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+			battle_log->Text += " -> " + shellName_String + "\n";
+			log_line++;
+			break;
+		}
+		default:
+			// Battle Log (戰鬥指令對應輸出)
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += "Team" + team + vesselName_String + " FIRE to ";
+			battle_log->Text += "(" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+			battle_log->Text += " -> Fail\n";
+			log_line++;
+			break;
+		}
+	}
+	// 如果指令是DEFENSE
+	else if (cmdType->ToUpper() == "DEFENSE")
+	{
+		string vesselName = "";
+		string shellName = "";
+
+		while (cmd[pointer] != ' ')
+		{
+			vesselName += cmd[pointer];
+			pointer++;
+		}
+
+		if (cmd[pointer] != ' ')  pointer++;
+
+		while (cmd[pointer] != ' ' || cmd[pointer] != '\0')
+		{
+			shellName += cmd[pointer];
+			pointer++;
+		}
+		System::String ^vesselName_String, ^shellName_String;
+		vesselName_String = gcnew String(vesselName.c_str());
+		shellName_String = gcnew String(shellName.c_str());
+
+		int defenseSituation = defense(team, vesselName, shellName);	//防守情形
+		if (defenseSituation != -1)
+		{
+			this->Controls->Remove(Shell_Label[defenseSituation]);
+			Shell_Label->RemoveAt(defenseSituation);
+
+			// Battle Log (戰鬥指令對應輸出)
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += vesselName_String + " DEFENSE " + shellName_String;
+			battle_log->Text += " -> Hit" + "\n";
+			log_line++;
+		}
+		else
+		{
+			// Battle Log (戰鬥指令對應輸出)
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += vesselName_String + " DEFENSE " + shellName_String;
+			battle_log->Text += " -> Fail" + "\n";
+			log_line++;
+		}
+	}
+	// 如果指令是MOVE
+	else if (cmdType->ToUpper() == "MOVE")
+	{
+		String^ speed;
+		String^ angle;
+
+		string vesselName;
+		double toSpeed;
+		int toAngle;
+
+		while (cmd[pointer] != ' ')
+		{
+			vesselName += cmd[pointer];
+			pointer++;
+		}
+
+		if (cmd[pointer] == ' ') pointer++;
+
+		while (cmd[pointer] != ' ')
+		{
+			speed += cmd[pointer];
+			pointer++;
+		}
+
+		if (cmd[pointer] == ' ') pointer++;
+
+		while (cmd[pointer] != ' ' && cmd[pointer] != '\0')
+		{
+			angle += cmd[pointer];
+			pointer++;
+		}
+
+		toSpeed = System::Convert::ToDouble(speed);
+		toAngle = System::Convert::ToInt32(angle);
+		System::String ^vesselName_String = gcnew System::String(vesselName.c_str());
+
+		// Battle Log (戰鬥指令對應輸出)
+		if (log_line >= 25)
+		{
+			log_line = 0;
+			battle_log->ResetText();
+		}
+		battle_log->Text += "[" + Min + ":" + Sec + "] ";
+		battle_log->Text += "Team" + team + vesselName_String + " MOVE to " + toAngle + " as " + toSpeed;
+		if (move(team, vesselName, toSpeed, toAngle))
+		{
+			battle_log->Text += " -> Success\n";
+			log_line++;
+		}
+		else
+		{
+			battle_log->Text += " -> Fail\n";
+			log_line++;
+		}
+	}
+	// 如果指令是TAG
+	else if (cmdType->ToUpper() == "TAG")
+	{
+		string vesselName;
+		string newName;
+
+		while (cmd[pointer] != ' ')
+		{
+			vesselName += cmd[pointer];
+			pointer++;
+		}
+
+		if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理type
+
+		while (cmd[pointer] != ' ')
+		{
+			newName += cmd[pointer];
+			pointer;
+		}
+
+		System::String ^vesselName_String, ^newName_String;
+		vesselName_String = gcnew System::String(vesselName.c_str());
+		newName_String = gcnew System::String(newName.c_str());
+
+		// Battle Log (戰鬥指令對應輸出)
+		if (log_line >= 25)
+		{
+			log_line = 0;
+			battle_log->ResetText();
+		}
+		battle_log->Text += "[" + Min + ":" + Sec + "] ";
+		battle_log->Text += "Team" + team + " RENAME " + vesselName_String + " to " + newName_String;
+		if (tag(team, vesselName, newName))
+		{
+			battle_log->Text += " -> Success\n";
+			log_line++;
+		}
+		else
+		{
+			battle_log->Text += " -> Fail\n";
+			log_line++;
+		}
+	}
+	// 如果指令無效
+	else
+	{
+		String^ tempCmd = gcnew String(cmd.c_str());
+		//battle_log->Text += "cmdType = " + cmdType + "\n";	//01:25更改
+		//battle_log->Text += ("Command : " + tempCmd + " is invalid.\n");	//01:25更改
+		log_line++;
+		if (log_line >= 25)
+		{
+			log_line = 0;
+			battle_log->ResetText();
+			battle_log->Text += ("Command : " + tempCmd + " is invalid.\n");
+			log_line++;
+		}
+	}
 }
 
 // SET指令
@@ -329,7 +787,6 @@ bool set(char team, string name, string type, double x, double y)
 		newVessel.setY(y);
 		Vessel_vector.push_back(newVessel);
 		return true;
-
 	}
 	else if (type == "BB") {
 		for (int i = 0; i < Vessel_vector.size(); i++) {
@@ -413,9 +870,9 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 int defense(char team, string vessel_name, string shell_name)	//防守艦隊伍、防守艦名字、砲彈名字
 {
 	/*
-	先檢查有沒有這艘船艦，在檢查有沒有這個砲彈
-	return種類：
-	1 = 正常防守, 2 = 沒有這艘船, 3 = 沒有這個砲彈, 4 = 防守CD時間未到, 5 = 防守距離不夠
+		先檢查有沒有這艘船艦，在檢查有沒有這個砲彈
+		return種類：
+		如果是正常防守，就回傳被刪掉的shell的index，其他情況則回傳-1
 	*/
 	// 先查Vessel_vector裡有沒有(vessel_name)這個戰艦
 	for (int i = 0; i < Vessel_vector.size(); i++)
@@ -430,22 +887,30 @@ int defense(char team, string vessel_name, string shell_name)	//防守艦隊伍�
 				if (Shell_vector[i].getName() == vessel_name)
 				{
 					if (Vessel_vector[i].getDefCD() == 0
-						&& (distance(Vessel_vector[i].getX(),Vessel_vector[i].getY(),Shell_vector[j].getX(),Shell_vector[j].getY()))
+						&& (distance(Vessel_vector[i].getX(), Vessel_vector[i].getY(), Shell_vector[j].getX(), Shell_vector[j].getY()))
 						<= Vessel_vector[i].getDefRange())	//如果可以防禦
 					{
-						Shell_vector.erase(Shell_vector.begin() + j);
-						return 1;
+						if (Vessel_vector[i].getType() == "CV")	//重設CD
+							Vessel_vector[i].setDefCD(CV_DEF_CD);
+						else if (Vessel_vector[i].getType() == "BB")
+							Vessel_vector[i].setDefCD(BB_DEF_CD);
+						else if (Vessel_vector[i].getType() == "CG")
+							Vessel_vector[i].setDefCD(CG_DEF_CD);
+						else if (Vessel_vector[i].getType() == "DD")
+							Vessel_vector[i].setDefCD(DD_DEF_CD);
+						Shell_vector.erase(Shell_vector.begin() + j);	//刪除砲彈
+						return j;
 					}
 					else
-						return 4;
+						return (-1);
 				}
 			}
 			// 如果沒找到砲彈
-			return 3;
+			return (-1);
 		}
 	}
 	//如果找不到這艘戰艦
-	return 2;
+	return (-1);
 }
 
 //TAG 指令

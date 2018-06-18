@@ -375,11 +375,13 @@ namespace Project314
 				Sec = "0" + Sec;
 			time->Text = (Min + ":" + Sec);	//輸出時間
 
-											// 更新船艦的CD時間
+			// 更新船艦的CD時間
 			for (int i = 0; i < Vessel_vector.size(); i++)
 			{
-				Vessel_vector[i].setAtkCD(Vessel_vector[i].getAtkCD() - 1);
-				Vessel_vector[i].setDefCD(Vessel_vector[i].getDefCD() - 1);
+				if (Vessel_vector[i].getAtkCD() != 0)
+					Vessel_vector[i].setAtkCD(Vessel_vector[i].getAtkCD() - 1);
+				if (Vessel_vector[i].getDefCD() != 0)
+					Vessel_vector[i].setDefCD(Vessel_vector[i].getDefCD() - 1);
 				Vessel_vector[i].moving();//船艦移動
 			}
 
@@ -398,8 +400,6 @@ namespace Project314
 				}
 			}
 		}
-	private: System::Void commands_text_title_Click(System::Object^  sender, System::EventArgs^  e) {
-	}
 	};
 #pragma endregion
 }

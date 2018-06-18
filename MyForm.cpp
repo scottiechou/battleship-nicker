@@ -12,6 +12,19 @@ void Main(array<String^>^ args)
 	Application::Run(%form);
 }
 
+void Project314::MyForm::writeLog(String^ text)
+{
+	battle_log->Text += (text + '\n');
+	log_line++;
+	if (log_line >= 25)
+	{
+		log_line = 0;
+		battle_log->ResetText();
+		battle_log->Text += (text + "\n");
+		log_line++;
+	}
+}
+
 void Project314::MyForm::commandOperation(string cmd, char team)
 {
 	String^ cmdType = "";//命令種類

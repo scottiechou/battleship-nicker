@@ -380,8 +380,23 @@ namespace Project314
 			{
 				Vessel_vector[i].setAtkCD(Vessel_vector[i].getAtkCD() - 1);
 				Vessel_vector[i].setDefCD(Vessel_vector[i].getDefCD() - 1);
+				Vessel_vector[i].moving();//船艦移動
 			}
 
+			for (int i = 0; i < Shell_vector.size(); i++)
+			{
+				Shell_vector[i].moving();//砲彈移動
+				if (Shell_vector[i].moving() >= 0) //打到了
+				{
+					int k = Shell_vector[i].moving();
+					this->Controls->Remove(Vessel_Label[k]);
+					this->Controls->Remove(Shell_Label[i]);
+				}
+				else if (Shell_vector[i].moving() == -1)//沒打到
+				{
+					this->Controls->Remove(Shell_Label[i]);
+				}
+			}
 		}
 	private: System::Void commands_text_title_Click(System::Object^  sender, System::EventArgs^  e) {
 	}

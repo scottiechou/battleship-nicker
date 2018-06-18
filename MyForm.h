@@ -772,7 +772,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 }
 
 // SET指令
-bool set(char team, string name, string type, double x, double y) 
+bool set(char team, string name, string type, double x, double y)
 {
 
 	if (type == "CV") {
@@ -783,10 +783,12 @@ bool set(char team, string name, string type, double x, double y)
 		}
 		CV newVessel;
 		newVessel.setName(name);
+		newVessel.setTeam(team);
 		newVessel.setX(x);
 		newVessel.setY(y);
 		Vessel_vector.push_back(newVessel);
 		return true;
+
 	}
 	else if (type == "BB") {
 		for (int i = 0; i < Vessel_vector.size(); i++) {
@@ -796,6 +798,7 @@ bool set(char team, string name, string type, double x, double y)
 		}
 		BB newVessel;
 		newVessel.setName(name);
+		newVessel.setTeam(team);
 		newVessel.setX(x);
 		newVessel.setY(y);
 		Vessel_vector.push_back(newVessel);
@@ -809,6 +812,7 @@ bool set(char team, string name, string type, double x, double y)
 		}
 		CG newVessel;
 		newVessel.setName(name);
+		newVessel.setTeam(team);
 		newVessel.setX(x);
 		newVessel.setY(y);
 		Vessel_vector.push_back(newVessel);
@@ -822,6 +826,7 @@ bool set(char team, string name, string type, double x, double y)
 		}
 		DD newVessel;
 		newVessel.setName(name);
+		newVessel.setTeam(team);
 		newVessel.setX(x);
 		newVessel.setY(y);
 		Vessel_vector.push_back(newVessel);

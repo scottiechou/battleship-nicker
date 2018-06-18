@@ -1,6 +1,10 @@
 #include "Vessel.h"
+#include "MyForm.h"
+
 
 #pragma region get()
+
+
 string Vessel::getName()
 {
 	return this->name;
@@ -87,7 +91,6 @@ double Shell::getY()
 {
 	return this->y;
 }
-
 #pragma endregion
 #pragma region set()
 void Vessel::setHp(double hp)
@@ -145,9 +148,101 @@ void Vessel::setY(double y)
 	this->y = y;
 }
 
+void Vessel::moving()
+{
+	double newX, newY;
+
+	double xBound = x;
+	double yBound = y;
+
+	newX = currentSpeed * cos(angle / 180 * PI);
+	newY = currentSpeed * sin(angle / 180 * PI);
+
+	if (x + newX <= 0.0)
+	{
+		xBound = 0.0;
+		newY *= ((x - 0.0) / newX);
+		currentSpeed = 0.0;
+	}
+	else if (x + newX >= 20.0)
+	{
+		xBound = 20.0;
+		newY *= ((20.0 - x) / newX);
+		currentSpeed = 0.0;
+	}
+
+	if (y + newY <= 0.0)
+	{
+		yBound = 0.0;
+		newX *= ((y - 0.0) / newY);
+		currentSpeed = 0.0;
+	}
+
+	else if (y + newY >= 20.0)
+	{
+		yBound = 20.0;
+		newX *= ((20.0 - y) / newY);
+		currentSpeed = 0;
+	}
+
+	if (x != xBound)
+		x = xBound;
+	else
+		x += newX;
+
+	if (y != yBound)
+		y = yBound;
+	else
+		y += newY;
+	
+
+}
+
 void Vessel::setAngle(int angle)
 {
 	this->angle = angle;
+}
+
+bool getHit(Vessel& it, Shell* weapon)
+{
+	if (weapon->getX() == it.getX() && weapon->getY() == it.getY())//座標相同表擊中
+	{
+		double tempHP = it.getHp();//先得到船艦的HP
+		tempHP -= weapon->getATK();//減去武器的攻擊力
+
+		if (tempHP <= 0)//小於0表擊沉
+		{
+			for (int i = 0; i < Vessel_vector.size(); i++)//從vector裡刪除
+			{
+				if (Vessel_vector[i].getName() == it.getName() && Vessel_vector[i].getTeam() == it.getTeam())
+				{
+					Vessel_vector.erase(Vessel_vector.begin() + i);
+					break;
+				}
+			}
+			it.vanish();//本身刪除
+		}
+		else
+		{
+			it.setHp(tempHP);//反之扣血
+		}
+
+		for (int i = 0; i < Shell_vector.size(); i++)//刪除Shell
+		{
+			if (Shell_vector[i].getName() == weapon->getName())
+			{
+				Shell_vector.erase(Shell_vector.begin() + i);
+				break;
+			}
+		}
+		weapon->vanish();
+		return true;
+	}
+
+
+	else
+		weapon->vanish();
+		return false;
 }
 
 void Shell::setX(double x)
@@ -159,6 +254,46 @@ void Shell::setY(double y)
 {
 	this->y = y;
 }
+
+double Shell::getATK()
+{
+	return this->attack;
+}
+
+int  Shell::moving()
+{
+	double xRange, yRange;
+	xRange = destination_X - x;
+	yRange = destination_Y - y;
+
+	double range = pow(xRange, 2) + pow(yRange, 2);
+	range = sqrt(range);
+
+	x += speed * (xRange / range);
+	y += speed * (yRange / range);
+	   //v目的地在原位置左邊，且移動後超過目的地    v目的地在原位置右邊
+	if ((xRange < 0 && destination_X > x) || (xRange > 0 && destination_X < x))
+	{
+		x = destination_X;
+	}
+	   //v目的地在原位置上面                     v在原位置下面
+	if ((yRange < 0 && destination_Y > y) || (yRange > 0 && destination_Y < y))
+	{
+		y = destination_Y;
+	}
+
+	if (x == destination_X && y == destination_Y)
+	{
+		for (int i = 0; i < Vessel_vector.size(); i++)
+		{
+			if(getHit(Vessel_vector[i], this));//如果砲彈打到了
+			return i; //回傳是vector中第幾個
+		}
+		return -1; //沒打到回傳-1
+	}
+	return -2;//還沒到目標回傳-2
+}
+
 #pragma endregion
 #pragma region 建構子
 CV::CV()
@@ -190,7 +325,6 @@ BB::BB()
 	type = "BB";
 	angle = 0;
 }
-}
 
 CG::CG()
 {
@@ -206,7 +340,6 @@ CG::CG()
 	type = "CG";
 	angle = 0;
 }
-}
 
 DD::DD()
 {
@@ -221,7 +354,6 @@ DD::DD()
 	weaponAtt = 1;
 	type = "DD";
 	angle = 0;
-}
 }
 // Shell的建構子
 Shell::Shell(string name, double x, double y, double destination_X, double destination_Y, double speed, double attack)

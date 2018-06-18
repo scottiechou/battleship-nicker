@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 
+class Vessel;
+class Shell;
+
 // 船艦攻擊CD
 #define CV_ATT_CD 60
 #define BB_ATT_CD 30
@@ -14,15 +17,21 @@
 #define CG_DEF_CD 30
 #define DD_DEF_CD 60
 
+#define PI 3.1415926
+
 using std::string;
 
+
+
+#pragma 
 class Vessel 
 {
 protected:
+	string type;
 	string name;
 	char team;
 	double x, y;
-	double hp, maxSpeed, atkRange, defRange, atkCD, defCD,maxSpeed,currentSpeed;
+	double hp, atkRange, defRange, atkCD, defCD, maxSpeed, currentSpeed;
 	double weaponSpeed, weaponAtt;
 	int angle;
 public:
@@ -39,6 +48,7 @@ public:
 	double getDefCD();
 	double getWeaponSpeed();
 	double getWeaponAtt();
+	string getType();
 	double getMaxSpeed();
 
 	// set()
@@ -54,8 +64,15 @@ public:
 	void setName(string name);
 	void setX(double x);
 	void setY(double y);
-	void setSpeed(double speed);
 	void setAngle(int angle);
+	void moving();
+	friend bool getHit(Vessel& it , Shell* weapon);
+
+	void vanish()
+	{
+		delete this;
+	}
+
 };
 class CV : public Vessel 
 {
@@ -90,6 +107,15 @@ public:
 	string getName();
 	double getX();
 	double getY();
+	double getATK();
 	void setX(double x);
 	void setY(double y);
+	void moving();
+	void vanish()
+	{
+		delete this;
+	}
+	
 };
+
+bool getHit(Vessel& it, Shell& weapon);

@@ -203,10 +203,14 @@ void Vessel::setAngle(int angle)
 	this->angle = angle;
 }
 
-bool getHit(Vessel& it, Shell* weapon)
+int getHit(Vessel& it, Shell* weapon)
 {
-	if (weapon->getX() == it.getX() && weapon->getY() == it.getY())//座標相同表擊中
+	System::String^ Success;
+	string success;
+	if (pow(it.getX() - weapon->getX(), 2) + pow(it.getY() - weapon->getY(), 2) <= 2.25)//範圍內表擊中
 	{
+		
+		success = (it.getName() + "is hit by " + weapon->getName());
 		double tempHP = it.getHp();//先得到船艦的HP
 		tempHP -= weapon->getATK();//減去武器的攻擊力
 
@@ -220,29 +224,38 @@ bool getHit(Vessel& it, Shell* weapon)
 					break;
 				}
 			}
+			success += (it.getName() + "is destroyed!");
 			it.vanish();//本身刪除
+
+			for (int i = 0; i < Shell_vector.size(); i++)//刪除Shell
+			{
+				if (Shell_vector[i].getName() == weapon->getName())
+				{
+					Shell_vector.erase(Shell_vector.begin() + i);
+					break;
+				}
+			}
+			return 1;
 		}
 		else
 		{
 			it.setHp(tempHP);//反之扣血
-		}
-
-		for (int i = 0; i < Shell_vector.size(); i++)//刪除Shell
-		{
-			if (Shell_vector[i].getName() == weapon->getName())
+			for (int i = 0; i < Shell_vector.size(); i++)//刪除Shell
 			{
-				Shell_vector.erase(Shell_vector.begin() + i);
-				break;
+				if (Shell_vector[i].getName() == weapon->getName())
+				{
+					Shell_vector.erase(Shell_vector.begin() + i);
+					break;
+				}
 			}
+			return 2;
 		}
-		weapon->vanish();
-		return true;
 	}
 
 
 	else
 		weapon->vanish();
-		return false;
+		return -1; //回傳-1表沒打中
 }
 
 void Shell::setX(double x)
@@ -286,12 +299,14 @@ int  Shell::moving()
 	{
 		for (int i = 0; i < Vessel_vector.size(); i++)
 		{
-			if(getHit(Vessel_vector[i], this));//如果砲彈打到了
-			return i; //回傳是vector中第幾個
+			if (getHit(Vessel_vector[i], this) == 1)//如果砲彈打到了
+			return i;  //回傳是vector中第幾個 要刪掉label
+			else if (getHit(Vessel_vector[i], this) == 2)
+			return -1; //打到扣血
 		}
-		return -1; //沒打到回傳-1
+		return -2; //沒打到回傳-1
 	}
-	return -2;//還沒到目標回傳-2
+	return -3;//還沒到目標回傳-2
 }
 
 #pragma endregion

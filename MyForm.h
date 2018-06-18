@@ -391,15 +391,30 @@ namespace Project314
 				if (Shell_vector[i].moving() >= 0) //打到了
 				{
 					int k = Shell_vector[i].moving();
+					string success;
+					success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + " and destroyed!");
+					String^ Success = gcnew System::String(success.c_str());
+					writeLog(Success);
+
+					int k = Shell_vector[i].moving();
 					this->Controls->Remove(Vessel_Label[k]);
 					this->Controls->Remove(Shell_Label[i]);
 				}
-				else if (Shell_vector[i].moving() == -1)//沒打到
+				else if (Shell_vector[i].moving() == -1)
 				{
+	                
+					this->Controls->Remove(Shell_Label[i]);
+				}
+				else if (Shell_vector[i].moving() == -2)//沒打到
+				{
+					string success = (Shell_vector[i].getName() + "hit miss!");
+					String^ Success = gcnew System::String(success.c_str());
+					writeLog(Success);
 					this->Controls->Remove(Shell_Label[i]);
 				}
 			}
 		}
+		 public: void writeLog(String^ text);
 	};
 #pragma endregion
 }

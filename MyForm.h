@@ -396,17 +396,25 @@ namespace Project314
 				{
 					int k = Shell_vector[i].moving();
 					string success;
-					success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + " and destroyed!");
-					String^ Success = gcnew System::String(success.c_str());
-					writeLog(Success);
+					if (Shell_vector[i].getATK() >= Vessel_vector[k].getHp())
+					{
+						success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + " and destroyed!");
+						String^ Success = gcnew System::String(success.c_str());
+						writeLog(Success);
+						this->Controls->Remove(Vessel_Label[k]);
+					}
+					else
+					{
+						String^ value;
+						success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + "!\n"
+							       +Vessel_vector[k].getName() + " get " );
+						String^Success = gcnew System::String(success.c_str());
+						value = System::Convert::ToString(Shell_vector[i].getATK());
+						Success += value + "damage!";
+						writeLog(Success);
+					}
 
-					int k = Shell_vector[i].moving();
-					this->Controls->Remove(Vessel_Label[k]);
-					this->Controls->Remove(Shell_Label[i]);
-				}
-				else if (Shell_vector[i].moving() == -1)
-				{
-	                
+					
 					this->Controls->Remove(Shell_Label[i]);
 				}
 				else if (Shell_vector[i].moving() == -2)//沒打到
@@ -418,6 +426,8 @@ namespace Project314
 				}
 			}
 		}
+	private: System::Void commands_text_title_Click(System::Object^  sender, System::EventArgs^  e) {
+	}
 		 public: void writeLog(String^ text);
 	};
 #pragma endregion

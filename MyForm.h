@@ -387,6 +387,7 @@ namespace Project314
 				if (Vessel_vector[i].getDefCD() != 0)
 					Vessel_vector[i].setDefCD(Vessel_vector[i].getDefCD() - 1);
 				Vessel_vector[i].moving();//船艦移動
+					Vessel_Label[i]->Location = System::Drawing::Point(10 + Vessel_vector[i].getX() * distance_untiy, 10 + Vessel_vector[i].getY() * distance_untiy);
 			}
 
 			for (int i = 0; i < Shell_vector.size(); i++)

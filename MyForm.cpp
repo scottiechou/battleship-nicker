@@ -358,6 +358,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 		}
 		battle_log->Text += "[" + Min + ":" + Sec + "] ";
 		battle_log->Text += "Team" + team_Char + " " + vesselName_String + " MOVE to " + angle + " as " + speed;
+		move(team, vesselName, toSpeed, toAngle);
 		if (move(team, vesselName, toSpeed, toAngle))
 		{
 			battle_log->Text += " -> Success\n";

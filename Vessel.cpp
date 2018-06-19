@@ -205,15 +205,14 @@ void Vessel::setAngle(int angle)
 
 int getHit(Vessel& it, Shell* weapon)
 {
-	System::String^ Success;
-	string success;
+
 	if (pow(it.getX() - weapon->getX(), 2) + pow(it.getY() - weapon->getY(), 2) <= 2.25)//範圍內表擊中
 	{
+		int hitValue = weapon ->getATK();
 		
-		success = (it.getName() + "is hit by " + weapon->getName());
 		double tempHP = it.getHp();//先得到船艦的HP
 		tempHP -= weapon->getATK();//減去武器的攻擊力
-
+		
 		if (tempHP <= 0)//小於0表擊沉
 		{
 			for (int i = 0; i < Vessel_vector.size(); i++)//從vector裡刪除
@@ -224,7 +223,6 @@ int getHit(Vessel& it, Shell* weapon)
 					break;
 				}
 			}
-			success += (it.getName() + "is destroyed!");
 			it.vanish();//本身刪除
 
 			for (int i = 0; i < Shell_vector.size(); i++)//刪除Shell
@@ -235,7 +233,7 @@ int getHit(Vessel& it, Shell* weapon)
 					break;
 				}
 			}
-			return 1;
+			
 		}
 		else
 		{
@@ -248,8 +246,9 @@ int getHit(Vessel& it, Shell* weapon)
 					break;
 				}
 			}
-			return 2;
+			
 		}
+		return 1;//回傳1表擊中
 	}
 
 

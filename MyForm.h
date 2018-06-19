@@ -251,6 +251,10 @@ namespace Project314
 				this->game_timer->Enabled = true;	//時間開始
 				commands_A->Enabled = false;	//停止輸入指令
 				commands_B->Enabled = false;
+				if (commands_A->Text->Length > 0 && commands_A->Text[commands_A->Text->Length - 1] != '\n')	//方-6/19新增
+					commands_A->Text += "\n";								//(沒有這行的話會發生"command要多加一個空行")
+				if (commands_B->Text->Length > 0 && commands_B->Text[commands_B->Text->Length - 1] != '\n')	//不然會runtime error
+					commands_B->Text += "\n";
 				// 輸出開始訊號
 				System::String ^Min, ^Sec;	//將時間轉成String型態後再輸出
 				Min = System::Convert::ToString(minute);

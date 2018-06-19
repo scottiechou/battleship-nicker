@@ -392,6 +392,7 @@ namespace Project314
 			for (int i = 0; i < Shell_vector.size(); i++)
 			{
 				Shell_vector[i].moving();//砲彈移動
+				Shell_Label[i]->Location = System::Drawing::Point(10 + Shell_vector[i].getX() * distance_untiy, 10 + Shell_vector[i].getY() * distance_untiy);
 				if (Shell_vector[i].moving() >= 0) //打到了
 				{
 					int k = Shell_vector[i].moving();

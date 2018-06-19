@@ -110,7 +110,7 @@ public:
 	double getATK();
 	void setX(double x);
 	void setY(double y);
-	void moving();
+	int moving();
 	void vanish()
 	{
 		delete this;

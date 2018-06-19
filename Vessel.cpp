@@ -300,12 +300,10 @@ int  Shell::moving()
 		{
 			if (getHit(Vessel_vector[i], this) == 1)//如果砲彈打到了
 			return i;  //回傳是vector中第幾個 要刪掉label
-			else if (getHit(Vessel_vector[i], this) == 2)
-			return -1; //打到扣血
 		}
-		return -2; //沒打到回傳-1
+		return -1; //沒打到回傳-1
 	}
-	return -3;//還沒到目標回傳-2
+	return -2;//還沒到目標回傳-2
 }
 
 #pragma endregion

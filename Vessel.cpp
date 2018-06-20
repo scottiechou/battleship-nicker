@@ -203,59 +203,6 @@ void Vessel::setAngle(int angle)
 	this->angle = angle;
 }
 
-int getHit(Vessel& it, Shell* weapon)
-{
-
-	if (pow(it.getX() - weapon->getX(), 2) + pow(it.getY() - weapon->getY(), 2) <= 2.25)//範圍內表擊中
-	{
-		int hitValue = weapon ->getATK();
-		
-		double tempHP = it.getHp();//先得到船艦的HP
-		tempHP -= weapon->getATK();//減去武器的攻擊力
-		
-		if (tempHP <= 0)//小於0表擊沉
-		{
-			for (int i = 0; i < Vessel_vector.size(); i++)//從vector裡刪除
-			{
-				if (Vessel_vector[i].getName() == it.getName() && Vessel_vector[i].getTeam() == it.getTeam())
-				{
-					Vessel_vector.erase(Vessel_vector.begin() + i);
-					break;
-				}
-			}
-			it.vanish();//本身刪除
-
-			for (int i = 0; i < Shell_vector.size(); i++)//刪除Shell
-			{
-				if (Shell_vector[i].getName() == weapon->getName())
-				{
-					Shell_vector.erase(Shell_vector.begin() + i);
-					break;
-				}
-			}
-			
-		}
-		else
-		{
-			it.setHp(tempHP);//反之扣血
-			for (int i = 0; i < Shell_vector.size(); i++)//刪除Shell
-			{
-				if (Shell_vector[i].getName() == weapon->getName())
-				{
-					Shell_vector.erase(Shell_vector.begin() + i);
-					break;
-				}
-			}
-			
-		}
-		return 1;//回傳1表擊中
-	}
-
-
-	else
-		weapon->vanish();
-		return -1; //回傳-1表沒打中
-}
 
 void Shell::setX(double x)
 {
@@ -272,7 +219,17 @@ double Shell::getATK()
 	return this->attack;
 }
 
-int  Shell::moving()
+double Shell::getDesX()
+{
+	return this->destination_X;
+}
+
+double Shell::getDesY()
+{
+	return this->destination_X;
+}
+
+void  Shell::moving()
 {
 	double xRange, yRange;
 	xRange = destination_X - x;
@@ -293,17 +250,6 @@ int  Shell::moving()
 	{
 		y = destination_Y;
 	}
-
-	if (x == destination_X && y == destination_Y)
-	{
-		for (int i = 0; i < Vessel_vector.size(); i++)
-		{
-			if (getHit(Vessel_vector[i], this) == 1)//如果砲彈打到了
-			return i;  //回傳是vector中第幾個 要刪掉label
-		}
-		return -1; //沒打到回傳-1
-	}
-	return -2;//還沒到目標回傳-2
 }
 
 #pragma endregion

@@ -22,7 +22,7 @@ bool set(char team, string name, string type, double x, double y);
 double distance(double x1, double y1, double x2, double y2);	//測量(x1, y1)與(x2, y2)距離
 int fire(char team, string name, double x, double y);
 int defense(char team, string vessel_name, string shell_name);
-bool tag(char team, string old_name, string new_name);
+int tag(char team, string old_name, string new_name)
 bool move(char team, string name, double speed, int angle);
 
 namespace Project314

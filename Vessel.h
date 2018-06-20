@@ -66,12 +66,7 @@ public:
 	void setY(double y);
 	void setAngle(int angle);
 	void moving();
-	friend bool getHit(Vessel& it , Shell* weapon);
-
-	void vanish()
-	{
-		delete this;
-	}
+	
 
 };
 class CV : public Vessel 
@@ -107,15 +102,12 @@ public:
 	string getName();
 	double getX();
 	double getY();
+	double getDesX();
+	double getDesY();
 	double getATK();
 	void setX(double x);
 	void setY(double y);
-	int moving();
-	void vanish()
-	{
-		delete this;
-	}
-	
+	void moving();
 };
 
-bool getHit(Vessel& it, Shell& weapon);
+

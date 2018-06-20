@@ -620,6 +620,7 @@ bool move(char team, string name, double speed, int angle) // 回傳是否找到
 				angle %= 360;
 
 			Vessel_vector[p].setAngle(angle);
+			break;
 		}
 	}
 	return getVessel;

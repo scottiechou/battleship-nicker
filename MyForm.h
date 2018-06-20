@@ -379,7 +379,7 @@ namespace Project314
 				Sec = "0" + Sec;
 			time->Text = (Min + ":" + Sec);	//輸出時間
 
-			// 更新船艦的CD時間
+											// 更新船艦的CD時間
 			for (int i = 0; i < Vessel_vector.size(); i++)
 			{
 				if (Vessel_vector[i].getAtkCD() != 0)
@@ -387,44 +387,57 @@ namespace Project314
 				if (Vessel_vector[i].getDefCD() != 0)
 					Vessel_vector[i].setDefCD(Vessel_vector[i].getDefCD() - 1);
 				Vessel_vector[i].moving();//船艦移動
-					Vessel_Label[i]->Location = System::Drawing::Point(10 + Vessel_vector[i].getX() * distance_untiy, 10 + Vessel_vector[i].getY() * distance_untiy);
+				Vessel_Label[i]->Location = System::Drawing::Point(10 + Vessel_vector[i].getX() * distance_untiy, 10 + Vessel_vector[i].getY() * distance_untiy);
 			}
 
 			for (int i = 0; i < Shell_vector.size(); i++)
 			{
-				Shell_vector[i].moving();//砲彈移動
+				Shell_vector[i].moving();
 				Shell_Label[i]->Location = System::Drawing::Point(10 + Shell_vector[i].getX() * distance_untiy, 10 + Shell_vector[i].getY() * distance_untiy);
-				if (Shell_vector[i].moving() >= 0) //打到了
+
+				if (Shell_vector[i].getX() == Shell_vector[i].getDesX() &&
+					Shell_vector[i].getY() == Shell_vector[i].getDesY()) //到達目的
 				{
-					int k = Shell_vector[i].moving();
-					string success;
-					if (Shell_vector[i].getATK() >= Vessel_vector[k].getHp())
+					bool hit = false;
+					for (unsigned int k = 0; k < Vessel_vector.size(); k++)
 					{
-						success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + " and destroyed!");
+						double dx = pow((Shell_vector[i].getX() - Vessel_vector[k].getX()), 2);
+						double dy = pow((Shell_vector[i].getY() - Vessel_vector[k].getY()), 2);
+						if (dx + dy <= 2.25) //半徑在1.5之內
+						{
+							string success; //製造訊息
+							if (Shell_vector[i].getATK() >= Vessel_vector[k].getHp())//擊沉
+							{
+								success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + " and destroyed!");
+								String^ Success = gcnew System::String(success.c_str());
+								writeLog(Success);
+								Vessel_vector.erase(Vessel_vector.begin() + k);//從vector中清除
+								Shell_vector.erase(Shell_vector.begin() + k);
+								this->Controls->Remove(Vessel_Label[k]);
+								this->Controls->Remove(Shell_Label[i]);
+							}
+
+							else
+							{
+								Vessel_vector[k].setHp(Vessel_vector[k].getHp() - Shell_vector[i].getATK());
+								String^ value;
+								success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + "!\n"
+									+ Vessel_vector[k].getName() + " get ");
+								String^Success = gcnew System::String(success.c_str());
+								value = System::Convert::ToString(Shell_vector[i].getATK());
+								Success += value + "damage!";
+								writeLog(Success);
+								this->Controls->Remove(Shell_Label[i]);
+							}
+						}
+					}
+					if (!hit)
+					{
+						string success = (Shell_vector[i].getName() + "hit miss!");
 						String^ Success = gcnew System::String(success.c_str());
 						writeLog(Success);
-						this->Controls->Remove(Vessel_Label[k]);
+						this->Controls->Remove(Shell_Label[i]);
 					}
-					else
-					{
-						String^ value;
-						success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + "!\n"
-							       +Vessel_vector[k].getName() + " get " );
-						String^Success = gcnew System::String(success.c_str());
-						value = System::Convert::ToString(Shell_vector[i].getATK());
-						Success += value + "damage!";
-						writeLog(Success);
-					}
-
-					
-					this->Controls->Remove(Shell_Label[i]);
-				}
-				else if (Shell_vector[i].moving() == -2)//沒打到
-				{
-					string success = (Shell_vector[i].getName() + "hit miss!");
-					String^ Success = gcnew System::String(success.c_str());
-					writeLog(Success);
-					this->Controls->Remove(Shell_Label[i]);
 				}
 			}
 		}

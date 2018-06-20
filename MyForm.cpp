@@ -502,7 +502,7 @@ inline double distance(double x1, double y1, double x2, double y2) {//距離
 		return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
 
-// FIRE指令--如果是正常發射就回傳船艦的索引值，如果找不到這艘戰艦-1, 如果CD時間還沒到回傳-2
+// FIRE指令--如果是正常發射就回傳船艦的索引值，如果找不到這艘戰艦-1, 如果CD時間還沒到回傳-2,如果發射距離大於射程回傳-3
 int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊艦名字、攻擊座標
 {
 	/*
@@ -514,9 +514,10 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 	for (int i = 0; i < Vessel_vector.size(); i++)
 	{
 		// (2)如果找到了這艘船，就檢查能不能發射(CD時間到了沒)
+		// (3)如果發射距離大於射程，一樣不行 6/20 22:28
 		if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team)
 		{
-			if (Vessel_vector[i].getAtkCD() == 0)	// 如果CD時間到了(可以發射)
+			if (Vessel_vector[i].getAtkCD() == 0 && distance(Vessel_vector[i].getX(), Vessel_vector[i].getY(), x, y) <= Vessel_vector[i].getAtkRange())	// 如果CD時間到了(可以發射)
 			{
 				stringstream pivot;
 				pivot << "Shell_" << team << Shell_vector.size() + 1;
@@ -526,8 +527,10 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 				Shell_vector.push_back(newShell);
 				return i;
 			}
-			else	// 如果CD時間還沒到(不能發射)
+			else if (Vessel_vector[i].getAtkCD() != 0)	// 如果CD時間還沒到(不能發射)
 				return -2;
+			else if (distance(Vessel_vector[i].getX(), Vessel_vector[i].getY(), x, y) > Vessel_vector[i].getAtkRange())
+				return -3;//如果大於射程 6/20 22:28
 		}
 	}
 	return -1;	// 如果找不到這艘戰艦

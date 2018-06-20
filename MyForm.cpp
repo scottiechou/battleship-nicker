@@ -49,371 +49,578 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 	if (cmd[pointer] == ' ')
 		pointer++; //第一次遇到空白
 
-	// 如果指令是SET
+				   // 如果指令是SET
 	if (cmdType->ToUpper() == "SET")
 	{
-		string vesselName = "";
-		string type = "";
-		String^ coordinate = "";
-		double x, y;
-
-		while (cmd[pointer] != ' ')
+		try
 		{
-			vesselName += cmd[pointer];
-			pointer++;
-		}
+			string vesselName = "";
+			string type = "";
+			String^ coordinate = "";
+			double x, y;
 
-		if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理type
-
-		while (cmd[pointer] != ' ')
-		{
-			type += cmd[pointer];
-			pointer++;
-		}
-
-		if (cmd[pointer] == ' ') pointer++; //第三次遇到空白，這次處理位置
-
-		while (cmd[pointer] != ')')
-		{
-			if (cmd[pointer] == '(') pointer++;
-
-			while (cmd[pointer] != ',')
+			while (cmd[pointer] != ' ')
 			{
-				tempS += cmd[pointer];
+				vesselName += cmd[pointer];
 				pointer++;
+				if (pointer >= cmd.length())
+				{
+					throw (cmd + "is invaild.Please follow the format set [Name] [type] (x,y) with space between each");
+				}
 			}
 
-			if (cmd[pointer] == ',')
+			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理type
+
+			if (pointer >= cmd.length())
 			{
+				throw (cmd + "is invaild.You must lost your Type ,and coordinate.");
+			}
+
+			while (cmd[pointer] != ' ')
+			{
+				type += cmd[pointer];
 				pointer++;
-				coordinate = gcnew String(tempS.c_str());
-				x = System::Convert::ToDouble(coordinate);
-				coordinate = "";
-				tempS.clear();
+				if (pointer >= cmd.length())
+				{
+					throw (cmd + "is invaild.You lost your coordinate or you forgot to enter space betwenn type and place.");
+				}
+			}
+
+
+			if (cmd[pointer] == ' ') pointer++; //第三次遇到空白，這次處理位置
+			if (pointer >= cmd.length())
+			{
+				throw (cmd + "is invaild.You must lost your coordinate");
+			}
+
+			if (cmd[pointer] != '(')
+			{
+				throw (cmd + "is invaild. You must lost your coordinate");
 			}
 
 			while (cmd[pointer] != ')')
 			{
-				tempS += cmd[pointer];
-				pointer++;
+				if (cmd[pointer] == '(') pointer++;
+
+				//避免(後沒數字
+				if (pointer >= cmd.length())
+				{
+					throw (cmd + "is invaild.You must lost your coordinate number (x,y)<-like this");
+				}
+
+				while (cmd[pointer] != ',')
+				{
+					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖
+					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					{
+						throw "Where is your x coordinate? Don't input anything except number.";
+					}
+
+					tempS += cmd[pointer];
+					pointer++;
+
+					//避免找不到逗號
+					if (pointer >= cmd.length())
+					{
+						throw (cmd + "is invaild.You must lost your y coordinate and common ");
+					}
+				}
+
+				if (cmd[pointer] == ',')
+				{
+					pointer++;
+					coordinate = gcnew String(tempS.c_str());
+					x = System::Convert::ToDouble(coordinate);
+					coordinate = "";
+					tempS.clear();
+					//避免逗號後沒東西
+					if (pointer >= cmd.length())
+					{
+						throw (cmd + "is invaild.You must lost your y coordinate and ) ");
+					}
+				}
+				//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
+				if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+				{
+					throw "Where is your y coordinate? Don't input anything except number.";
+				}
+
+				while (cmd[pointer] != ')')
+				{
+					//硬性規定(x,y)之間不能有任何符號 ( 3, 6 )<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
+					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					{
+						throw "Where is your y coordinate? Don't input anything except number.";
+					}
+
+					tempS += cmd[pointer];
+					pointer++;
+
+					//避免找不到 )
+
+					if (pointer >= cmd.length())
+					{
+						throw (cmd + "is invaild.You must lost your ')'");
+					}
+				}
+
+				coordinate = gcnew String(tempS.c_str());
+				y = System::Convert::ToDouble(coordinate);
+				coordinate = "";
+				tempS.clear();
 			}
 
-			coordinate = gcnew String(tempS.c_str());
-			y = System::Convert::ToDouble(coordinate);
-			coordinate = "";
-			tempS.clear();
+			// 將船艦顯示到螢幕上
 
-		}
-
-		// 將船艦顯示到螢幕上
-		System::String ^vesselName_String, ^type_String;
-		vesselName_String = gcnew String(vesselName.c_str());
-		type_String = gcnew String(type.c_str());
-		Char team_Char = team;
-		if (set(team, vesselName, type, x, y))	// 如果成功設置
-		{
-			System::Windows::Forms::Label^ newVesselLabel;
-			newVesselLabel = (gcnew System::Windows::Forms::Label());
-			if (team == 'A')
-				newVesselLabel->ForeColor = System::Drawing::Color::Red;
-			else if (team == 'B')
-				newVesselLabel->ForeColor = System::Drawing::Color::Blue;
-			//newVesselLabel->BackColor = System::Drawing::Color::Navy;
-			newVesselLabel->Location = System::Drawing::Point(10 + x * distance_untiy, 10 + y * distance_untiy);
-			newVesselLabel->Text = "▲" + vesselName_String;
-			newVesselLabel->AutoSize = true;
-			Vessel_Label->Add(newVesselLabel);
-			int lastLabel = Vessel_vector.size() - 1;
-			this->Controls->Add(Vessel_Label[lastLabel]);
-
-			// Battle Log (戰鬥指令對應輸出)
-			if (log_line >= 25)
+			System::String ^vesselName_String, ^type_String;
+			vesselName_String = gcnew String(vesselName.c_str());
+			type_String = gcnew String(type.c_str());
+			Char team_Char = team;
+			if (set(team, vesselName, type, x, y))	// 如果成功設置
 			{
-				log_line = 0;
-				battle_log->ResetText();
+				System::Windows::Forms::Label^ newVesselLabel;
+				newVesselLabel = (gcnew System::Windows::Forms::Label());
+				if (team == 'A')
+					newVesselLabel->ForeColor = System::Drawing::Color::Red;
+				else if (team == 'B')
+					newVesselLabel->ForeColor = System::Drawing::Color::Blue;
+				//newVesselLabel->BackColor = System::Drawing::Color::Navy;
+				newVesselLabel->Location = System::Drawing::Point(10 + x * distance_untiy, 10 + y * distance_untiy);
+				newVesselLabel->Text = "▲" + vesselName_String;
+				newVesselLabel->AutoSize = true;
+				Vessel_Label->Add(newVesselLabel);
+				int lastLabel = Vessel_vector.size() - 1;
+				this->Controls->Add(Vessel_Label[lastLabel]);
+
+				// Battle Log (戰鬥指令對應輸出)
+				if (log_line >= 25)
+				{
+					log_line = 0;
+					battle_log->ResetText();
+				}
+				battle_log->Text += "[" + Min + ":" + Sec + "] ";
+				battle_log->Text += "Team" + team_Char + " SET " + vesselName_String + " with " + type_String;
+				battle_log->Text += " at (" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+				battle_log->Text += " -> Success\n";
+				log_line++;
 			}
-			battle_log->Text += "[" + Min + ":" + Sec + "] ";
-			battle_log->Text += "Team" + team_Char + " SET " + vesselName_String + " with " + type_String;
-			battle_log->Text += " at (" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
-			battle_log->Text += " -> Success\n";
-			log_line++;
-		}
-		else
-		{
-			// Battle Log (戰鬥指令對應輸出)
-			if (log_line >= 25)
+			else
 			{
-				log_line = 0;
-				battle_log->ResetText();
+				// Battle Log (戰鬥指令對應輸出)
+				if (log_line >= 25)
+				{
+					log_line = 0;
+					battle_log->ResetText();
+				}
+				battle_log->Text += "[" + Min + ":" + Sec + "] ";
+				battle_log->Text += "Team" + team_Char + " SET " + vesselName_String + " with " + type_String;
+				battle_log->Text += " at (" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+				battle_log->Text += " -> Fail\n";
+				log_line++;
 			}
-			battle_log->Text += "[" + Min + ":" + Sec + "] ";
-			battle_log->Text += "Team" + team_Char + " SET " + vesselName_String + " with " + type_String;
-			battle_log->Text += " at (" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
-			battle_log->Text += " -> Fail\n";
-			log_line++;
 		}
+		catch (string invalid)
+		{
+			String^ Invalid = gcnew System::String(invalid.c_str());
+			writeLog(Invalid);
+		}
+
 	}
 	// 如果指令是FIRE
 	else if (cmdType->ToUpper() == "FIRE")
 	{
-		string vesselName;
-		String^ coordinate;
-
-		double x, y;
-
-		while (cmd[pointer] != ' ')
+		try
 		{
-			vesselName += cmd[pointer];
-			pointer++;
-		}
+			string vesselName;
+			String^ coordinate;
 
-		if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理coordinate
+			double x, y;
+			//避免後面沒東西
+			if (pointer >= cmd.length())
+				throw(cmd + " is invalid , you must forget your Name.");
 
-		tempS.clear();
-		while (cmd[pointer] != ')')
-		{
-			if (cmd[pointer] == '(') pointer++;
-
-			while (cmd[pointer] != ',')
-			{
-				tempS += cmd[pointer];
-				pointer++;
-			}
-
-			if (cmd[pointer] == ',')
+			if (cmd[pointer] == ' ')
 			{
 				pointer++;
-				coordinate = gcnew String(tempS.c_str());
-				x = System::Convert::ToDouble(coordinate);
-				coordinate = "";
-				tempS.clear();
+				if (pointer >= cmd.length()) //結果他還是沒打名字
+					throw(cmd + " is invalid , you must forget your Name.");
 			}
 
+			while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
+				//避免沒東西
+				if (pointer >= cmd.length())
+					throw(cmd + " is invalid ,Please follow the format: FIRE [Name] (x,y) with space between each");
+			}
+
+
+			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理coordinate
+
+			if (pointer >= cmd.length()) //避免空白後沒東西
+				throw(cmd + " is invalid , you must forget your coordinate.");
+
+			if (cmd[pointer] != '(')
+				throw(cmd + " is invalid. You forget your (.");
+
+			tempS.clear();
 			while (cmd[pointer] != ')')
 			{
-				tempS += cmd[pointer];
-				pointer++;
+				if (cmd[pointer] == '(') pointer++;
+				//避免找不到,
+				if (pointer >= cmd.length())
+					throw(cmd + " is invalid , you must forget common.");
+
+				//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
+				if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+				{
+					throw "Where is your x coordinate? Don't input anything except number.";
+				}
+
+				while (cmd[pointer] != ',')
+				{
+					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					{
+						throw ("Where is your x coordinate? Don't input anything except number.");
+					}
+					tempS += cmd[pointer];
+					pointer++;
+					//避免沒逗號
+					if (pointer >= cmd.length())
+						throw(cmd + " is invalid , you must forget common.");
+					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
+					
+				}
+
+				if (cmd[pointer] == ',')
+				{
+					pointer++;
+					coordinate = gcnew String(tempS.c_str());
+					x = System::Convert::ToDouble(coordinate);
+					coordinate = "";
+					tempS.clear();
+
+					if (pointer >= cmd.length())
+						throw(cmd + " is invalid , you must forget y coordinate.");
+				}
+
+				while (cmd[pointer] != ')')
+				{
+					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					{
+						throw ("Where is your y coordinate? Don't input anything except number.");
+					}
+
+					tempS += cmd[pointer];
+					pointer++;
+
+					if (pointer >= cmd.length())
+						throw(cmd + " is invalid , you must forget ).");
+					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
+					
+				}
+
+				coordinate = gcnew String(tempS.c_str());
+				y = System::Convert::ToDouble(coordinate);
+				coordinate = "";
+				tempS.clear();
+
 			}
-
-			coordinate = gcnew String(tempS.c_str());
-			y = System::Convert::ToDouble(coordinate);
-			coordinate = "";
-			tempS.clear();
-
-		}
-		// 將砲彈顯示在螢幕上
-		System::String ^vesselName_String, ^shellName_String;
-		vesselName_String = gcnew String(vesselName.c_str());
-		Char team_Char = team;
-		int fireSituation = fire(team, vesselName, x, y);
-		if (fireSituation >= 0)
-		{
-			shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
-			System::Windows::Forms::Label^ newShellLabel;
-			newShellLabel = gcnew System::Windows::Forms::Label();
-			//newShellLabel->BackColor = System::Drawing::Color::Yellow;
-			newShellLabel->ForeColor = System::Drawing::Color::Black;
-			newShellLabel->Location = System::Drawing::Point(10 + Vessel_vector[fireSituation].getX() * distance_untiy, 10 + Vessel_vector[fireSituation].getY() * distance_untiy);
-			newShellLabel->Text = "●" + shellName_String;
-			newShellLabel->AutoSize = true;
-			Shell_Label->Add(newShellLabel);
-			int lastShell = Shell_vector.size() - 1;
-			this->Controls->Add(Shell_Label[lastShell]);
-
-			// Battle Log (戰鬥指令對應輸出)
-			if (log_line >= 25)
+			// 將砲彈顯示在螢幕上
+			System::String ^vesselName_String, ^shellName_String;
+			vesselName_String = gcnew String(vesselName.c_str());
+			Char team_Char = team;
+			int fireSituation = fire(team, vesselName, x, y);
+			if (fireSituation >= 0)
 			{
-				log_line = 0;
-				battle_log->ResetText();
+				shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
+				System::Windows::Forms::Label^ newShellLabel;
+				newShellLabel = gcnew System::Windows::Forms::Label();
+				//newShellLabel->BackColor = System::Drawing::Color::Yellow;
+				newShellLabel->ForeColor = System::Drawing::Color::Black;
+				newShellLabel->Location = System::Drawing::Point(10 + Vessel_vector[fireSituation].getX() * distance_untiy, 10 + Vessel_vector[fireSituation].getY() * distance_untiy);
+				newShellLabel->Text = "●" + shellName_String;
+				newShellLabel->AutoSize = true;
+				Shell_Label->Add(newShellLabel);
+				int lastShell = Shell_vector.size() - 1;
+				this->Controls->Add(Shell_Label[lastShell]);
+
+				// Battle Log (戰鬥指令對應輸出)
+				if (log_line >= 25)
+				{
+					log_line = 0;
+					battle_log->ResetText();
+				}
+				battle_log->Text += "[" + Min + ":" + Sec + "] ";
+				battle_log->Text += "Team" + team_Char + " " + vesselName_String + " FIRE to ";
+				battle_log->Text += "(" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+				battle_log->Text += " -> " + shellName_String + "\n";
+				log_line++;
 			}
-			battle_log->Text += "[" + Min + ":" + Sec + "] ";
-			battle_log->Text += "Team" + team_Char + " " + vesselName_String + " FIRE to ";
-			battle_log->Text += "(" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
-			battle_log->Text += " -> " + shellName_String + "\n";
-			log_line++;
-		}
-		else
-		{
-			// Battle Log (戰鬥指令對應輸出)
-			if (log_line >= 25)
+			else
 			{
-				log_line = 0;
-				battle_log->ResetText();
+				// Battle Log (戰鬥指令對應輸出)
+				if (log_line >= 25)
+				{
+					log_line = 0;
+					battle_log->ResetText();
+				}
+				battle_log->Text += "[" + Min + ":" + Sec + "] ";
+				battle_log->Text += "Team" + team_Char + " " + vesselName_String + " FIRE to ";
+				battle_log->Text += "(" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
+				battle_log->Text += " -> Fail\n";
+				log_line++;
 			}
-			battle_log->Text += "[" + Min + ":" + Sec + "] ";
-			battle_log->Text += "Team" + team_Char + " " + vesselName_String + " FIRE to ";
-			battle_log->Text += "(" + System::Convert::ToString(x) + "," + System::Convert::ToString(y) + ")";
-			battle_log->Text += " -> Fail\n";
-			log_line++;
+		}
+		catch (string invalid)
+		{
+			String^ Invalid = gcnew System::String(invalid.c_str());
+			writeLog(Invalid);
 		}
 	}
 	// 如果指令是DEFENSE
 	else if (cmdType->ToUpper() == "DEFENSE")
 	{
-		string vesselName = "";
-		string shellName = "";
-
-		while (cmd[pointer] != ' ')
+		try
 		{
-			vesselName += cmd[pointer];
-			pointer++;
-		}
+			string vesselName = "";
+			string shellName = "";
 
-		if (cmd[pointer] == ' ')  pointer++;
-
-		while (pointer < cmd.size()-1)
-		{
-			if(('a' <= cmd[pointer] && cmd[pointer] <= 'z') || ('A' <= cmd[pointer] && cmd[pointer] <= 'Z') || cmd[pointer] == '_' || ('0' <= cmd[pointer] && cmd[pointer] <= '9'))
-				shellName += cmd[pointer];
-			pointer++;
-		}
-		System::String ^vesselName_String, ^shellName_String;
-		vesselName_String = gcnew String(vesselName.c_str());
-		shellName_String = gcnew String(shellName.c_str());
-
-		int defenseSituation = defense(team, vesselName, shellName);	//防守情形
-		if (defenseSituation >= 0)
-		{
-			this->Controls->Remove(Shell_Label[defenseSituation]);
-			Shell_Label->RemoveAt(defenseSituation);
-
-			// Battle Log (戰鬥指令對應輸出)
-			if (log_line >= 25)
+			while (cmd[pointer] != ' ')
 			{
-				log_line = 0;
-				battle_log->ResetText();
+				vesselName += cmd[pointer];
+				pointer++;
+				//避免沒東西 
+				if (pointer >= cmd.length())
+					throw(cmd + " is invalid ,Please follow the format:-> Defense VesselName Shell_Name  <- with space between each");
 			}
-			battle_log->Text += "[" + Min + ":" + Sec + "] ";
-			battle_log->Text += vesselName_String + " DEFENSE " + shellName_String;
-			battle_log->Text += " -> Hit" + "\n";
-			log_line++;
-		}
-		else
-		{
-			// Battle Log (戰鬥指令對應輸出)
-			if (log_line >= 25)
+
+			if (cmd[pointer] == ' ')  pointer++;
+			if (pointer >= cmd.length())
+				throw(cmd + " is invalid , you forget your shell name to defense.");
+
+			while (pointer < cmd.size() - 1)
 			{
-				log_line = 0;
-				battle_log->ResetText();
+				if (('a' <= cmd[pointer] && cmd[pointer] <= 'z') || ('A' <= cmd[pointer] && cmd[pointer] <= 'Z') || cmd[pointer] == '_' || ('0' <= cmd[pointer] && cmd[pointer] <= '9'))
+					shellName += cmd[pointer];
+				pointer++;
+				//避免沒東西
 			}
-			//System::String ^ss = gcnew System::String(Shell_vector[0].getName().c_str());
-			//System::String ^inputss = gcnew System::String(shellName.c_str());
-			battle_log->Text += "[" + Min + ":" + Sec + "] ";
-			battle_log->Text += vesselName_String + " DEFENSE " + shellName_String;
-			battle_log->Text += " -> Fail(" + System::Convert::ToString(defenseSituation) + ")\n";
-			//battle_log->Text += "Shell_vector.size() = " + System::Convert::ToString(Shell_vector.size()) + "\n";
-			//battle_log->Text += "Shell_vector[0].name = " + ss + "\n";
-			//battle_log->Text += "shellName = " + inputss + "\n";
-			log_line++;
+			System::String ^vesselName_String, ^shellName_String;
+			vesselName_String = gcnew String(vesselName.c_str());
+			shellName_String = gcnew String(shellName.c_str());
+
+			int defenseSituation = defense(team, vesselName, shellName);	//防守情形
+			if (defenseSituation >= 0)
+			{
+				this->Controls->Remove(Shell_Label[defenseSituation]);
+				Shell_Label->RemoveAt(defenseSituation);
+
+				// Battle Log (戰鬥指令對應輸出)
+				if (log_line >= 25)
+				{
+					log_line = 0;
+					battle_log->ResetText();
+				}
+				battle_log->Text += "[" + Min + ":" + Sec + "] ";
+				battle_log->Text += vesselName_String + " DEFENSE " + shellName_String;
+				battle_log->Text += " -> Hit" + "\n";
+				log_line++;
+			}
+			else
+			{
+				// Battle Log (戰鬥指令對應輸出)
+				if (log_line >= 25)
+				{
+					log_line = 0;
+					battle_log->ResetText();
+				}
+				//System::String ^ss = gcnew System::String(Shell_vector[0].getName().c_str());
+				//System::String ^inputss = gcnew System::String(shellName.c_str());
+				battle_log->Text += "[" + Min + ":" + Sec + "] ";
+				battle_log->Text += vesselName_String + " DEFENSE " + shellName_String;
+				battle_log->Text += " -> Fail(" + System::Convert::ToString(defenseSituation) + ")\n";
+				//battle_log->Text += "Shell_vector.size() = " + System::Convert::ToString(Shell_vector.size()) + "\n";
+				//battle_log->Text += "Shell_vector[0].name = " + ss + "\n";
+				//battle_log->Text += "shellName = " + inputss + "\n";
+				log_line++;
+			}
+		}
+		catch (string invalid)
+		{
+			String^ Invalid = gcnew System::String(invalid.c_str());
+			writeLog(Invalid);
 		}
 	}
 	// 如果指令是MOVE
 	else if (cmdType->ToUpper() == "MOVE")
 	{
-		String^ speed;
-		String^ angle;
-
-		string vesselName;
-		double toSpeed;
-		int toAngle;
-
-		tempS.clear();
-		while (cmd[pointer] != ' ')
+		try
 		{
-			vesselName += cmd[pointer];
-			pointer++;
-		}
+			String^ speed;
+			String^ angle;
 
-		if (cmd[pointer] == ' ') pointer++;
+			string vesselName;
+			double toSpeed;
+			int toAngle;
+			//避免沒東西 
+			if (pointer >= cmd.length())
+				throw(cmd + " is invalid ,Please follow the format-> Move Name Speed Angle <-  with space between each");
 
-		while (cmd[pointer] != ' ')
-		{
-			tempS += cmd[pointer];
-			pointer++;
-		}
-		speed = gcnew System::String(tempS.c_str());
-		tempS.clear();
+			tempS.clear();
+			while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
 
-		if (cmd[pointer] == ' ') pointer++;
+				//避免沒東西 
+				if (pointer >= cmd.length())
+					throw(cmd + " is invalid , You forget your Speed and angle.");
+			}
 
-		while (pointer < cmd.size())
-		{
-			if('0' <= cmd[pointer] && cmd[pointer] <= '9')
+			if (cmd[pointer] == ' ') pointer++;
+
+			if (pointer >= cmd.length())
+				throw(cmd + " is invalid , You forget your Speed and angle.");
+
+			while (cmd[pointer] != ' ')
+			{
 				tempS += cmd[pointer];
-			pointer++;
-		}
-		angle = gcnew System::String(tempS.c_str());
-		tempS.clear();
+				pointer++;
+				if (pointer >= cmd.length())
+					throw(cmd + " is invalid , You forget your  angle.");
+			}
+			speed = gcnew System::String(tempS.c_str());
+			tempS.clear();
 
-		toSpeed = System::Convert::ToDouble(speed);
-		toAngle = System::Convert::ToInt32(angle);
-		System::String ^vesselName_String = gcnew System::String(vesselName.c_str());
+			if (cmd[pointer] == ' ') pointer++;
 
-		// Battle Log (戰鬥指令對應輸出)
-		Char team_Char = team;
-		if (log_line >= 25)
-		{
-			log_line = 0;
-			battle_log->ResetText();
+			while (pointer < cmd.size())
+			{
+				if ('0' <= cmd[pointer] && cmd[pointer] <= '9')
+					tempS += cmd[pointer];
+				else
+				{
+					throw (cmd + " is invalid ,  your  angle is not a pure number.");
+				}
+				pointer++;
+
+				//避免沒東西 
+				if (pointer >= cmd.length())
+					throw(cmd + " is invalid , You forget your Speed and angle.");
+			}
+			angle = gcnew System::String(tempS.c_str());
+			tempS.clear();
+
+			toSpeed = System::Convert::ToDouble(speed);
+			toAngle = System::Convert::ToInt32(angle);
+			System::String ^vesselName_String = gcnew System::String(vesselName.c_str());
+
+			// Battle Log (戰鬥指令對應輸出)
+			Char team_Char = team;
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += "Team" + team_Char + " " + vesselName_String + " MOVE to " + angle + " as " + speed;
+
+			if (move(team, vesselName, toSpeed, toAngle))
+			{
+				battle_log->Text += " -> Success\n";
+				log_line++;
+			}
+			else
+			{
+				battle_log->Text += " -> Fail\n";
+				log_line++;
+			}
+
+			/*for (unsigned int i = 0; i < Vessel_vector.size(); i++)
+			{
+				if (Vessel_vector[i].getName() == vesselName && Vessel_vector[i].getTeam() == team)
+				{
+					String^ speed = System::Convert::ToString(Vessel_vector[i].getSpeed());
+					writeLog(speed);
+					String^ angle = System::Convert::ToString(Vessel_vector[i].getAngle());
+					writeLog(angle);
+				}
+			}*/
 		}
-		battle_log->Text += "[" + Min + ":" + Sec + "] ";
-		battle_log->Text += "Team" + team_Char + " " + vesselName_String + " MOVE to " + angle + " as " + speed;
-		if (move(team, vesselName, toSpeed, toAngle))
+		catch (string invalid)
 		{
-			battle_log->Text += " -> Success\n";
-			log_line++;
-		}
-		else
-		{
-			battle_log->Text += " -> Fail\n";
-			log_line++;
+			String^ Invalid = gcnew System::String(invalid.c_str());
+			writeLog(Invalid);
 		}
 	}
 	// 如果指令是TAG
 	else if (cmdType->ToUpper() == "TAG")
 	{
-		string vesselName;
-		string newName;
-
-		while (cmd[pointer] != ' ')
+		try
 		{
-			vesselName += cmd[pointer];
-			pointer++;
+			string vesselName;
+			string newName;
+
+
+			//避免沒東西 
+			if (pointer >= cmd.length())
+				throw(cmd + " is invalid , Please follow the format->tag name newName<- with a space between each ");
+
+			while (cmd[pointer] != ' ')
+			{
+				vesselName += cmd[pointer];
+				pointer++;
+				if (pointer >= cmd.length())
+					throw(cmd + " is invalid , You must forget the newName or space. ");
+			}
+
+
+			
+
+			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理newName
+
+			if (pointer >= cmd.length())
+				throw(cmd + " is invalid , You forget your New Name.");
+
+			while (pointer < cmd.length() - 1)
+			{
+				newName += cmd[pointer];
+				pointer++;
+			}
+
+			System::String ^vesselName_String, ^newName_String;
+			vesselName_String = gcnew System::String(vesselName.c_str());
+			newName_String = gcnew System::String(newName.c_str());
+
+			// Battle Log (戰鬥指令對應輸出)
+			if (log_line >= 25)
+			{
+				log_line = 0;
+				battle_log->ResetText();
+			}
+			Char team_Char = team;
+			battle_log->Text += "[" + Min + ":" + Sec + "] ";
+			battle_log->Text += "Team" + team_Char + " RENAME " + vesselName_String + " to " + newName_String;
+			int tagSituation = tag(team, vesselName, newName);
+			if (tagSituation != -1)
+			{
+				battle_log->Text += " -> Success\n";
+				log_line++;
+				System::String ^vesselName_String = gcnew System::String(vesselName.c_str());
+				Vessel_Label[tagSituation]->Text = "▲" + newName_String;
+			}
+			else
+			{
+				battle_log->Text += " -> Fail\n";
+				log_line++;
+			}
 		}
-
-		if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理newName
-
-		while (pointer < cmd.length()-1)
+		catch (string invalid)
 		{
-			newName += cmd[pointer];
-			pointer++;
-		}
-
-		System::String ^vesselName_String, ^newName_String;
-		vesselName_String = gcnew System::String(vesselName.c_str());
-		newName_String = gcnew System::String(newName.c_str());
-
-		// Battle Log (戰鬥指令對應輸出)
-		if (log_line >= 25)
-		{
-			log_line = 0;
-			battle_log->ResetText();
-		}
-		Char team_Char = team;
-		battle_log->Text += "[" + Min + ":" + Sec + "] ";
-		battle_log->Text += "Team" + team_Char + " RENAME " + vesselName_String + " to " + newName_String;
-		int tagSituation = tag(team, vesselName, newName);
-		if (tagSituation != -1)
-		{
-			battle_log->Text += " -> Success\n";
-			log_line++;
-			System::String ^vesselName_String = gcnew System::String(vesselName.c_str());
-			Vessel_Label[tagSituation]->Text = "▲" + newName_String;
-		}
-		else
-		{
-			battle_log->Text += " -> Fail\n";
-			log_line++;
+			String^ Invalid = gcnew System::String(invalid.c_str());
+			writeLog(Invalid);
 		}
 	}
 	// 如果指令無效
@@ -429,6 +636,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 			log_line++;
 		}
 	}
+
 }
 
 // SET指令

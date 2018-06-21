@@ -579,15 +579,12 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 					throw(cmd + " is invalid , You must forget the newName or space. ");
 			}
 
-
-
-
 			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理newName
 
 			if (pointer >= cmd.length())
 				throw(cmd + " is invalid , You forget your New Name.");
 
-			while (pointer < cmd.length() - 1)
+			while (pointer < cmd.length())
 			{
 				newName += cmd[pointer];
 				pointer++;

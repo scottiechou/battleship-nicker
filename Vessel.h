@@ -89,6 +89,10 @@ class DD : public Vessel
 public:
 	DD();
 };
+class TK : public Vessel {
+public:
+	TK();
+};
 
 class Shell
 {

@@ -14,7 +14,7 @@ void Main(array<String^>^ args)
 
 void Project314::MyForm::writeLog(String^ text)
 {
-	battle_log->Text += (text + '\n');
+	battle_log->Text += (text + "\n");
 	log_line++;
 	if (log_line >= 25)
 	{
@@ -38,18 +38,21 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 	if (Sec->Length < 2)
 		Sec = "0" + Sec;
 
-	while (cmd[pointer] != ' ')	//01:25更改
+	if (cmd[0] == '\n')
+	{
+		return;
+	}
+	while (cmd[pointer] != ' ')
 	{
 		tempS += cmd[pointer];
 		pointer++;
 	}
-	cmdType = gcnew String(tempS.c_str());	//01:25更改
+	cmdType = gcnew String(tempS.c_str());
 	tempS.clear();
 
-	if (cmd[pointer] == ' ')
-		pointer++; //第一次遇到空白
+	if (cmd[pointer] == ' ') pointer++; //第一次遇到空白，處理指令型態
 
-				   // 如果指令是SET
+	// 如果指令是SET
 	if (cmdType->ToUpper() == "SET")
 	{
 		try
@@ -111,7 +114,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 				while (cmd[pointer] != ',')
 				{
 					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖
-					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
 						throw "Where is your x coordinate? Don't input anything except number.";
 					}
@@ -290,7 +293,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 					if (pointer >= cmd.length())
 						throw(cmd + " is invalid , you must forget common.");
 					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
-					
+
 				}
 
 				if (cmd[pointer] == ',')
@@ -318,7 +321,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 					if (pointer >= cmd.length())
 						throw(cmd + " is invalid , you must forget ).");
 					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
-					
+
 				}
 
 				coordinate = gcnew String(tempS.c_str());
@@ -540,13 +543,13 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 
 			/*for (unsigned int i = 0; i < Vessel_vector.size(); i++)
 			{
-				if (Vessel_vector[i].getName() == vesselName && Vessel_vector[i].getTeam() == team)
-				{
-					String^ speed = System::Convert::ToString(Vessel_vector[i].getSpeed());
-					writeLog(speed);
-					String^ angle = System::Convert::ToString(Vessel_vector[i].getAngle());
-					writeLog(angle);
-				}
+			if (Vessel_vector[i].getName() == vesselName && Vessel_vector[i].getTeam() == team)
+			{
+			String^ speed = System::Convert::ToString(Vessel_vector[i].getSpeed());
+			writeLog(speed);
+			String^ angle = System::Convert::ToString(Vessel_vector[i].getAngle());
+			writeLog(angle);
+			}
 			}*/
 		}
 		catch (string invalid)
@@ -577,7 +580,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 			}
 
 
-			
+
 
 			if (cmd[pointer] == ' ') pointer++; //第二次遇到空白，這次處理newName
 
@@ -749,10 +752,10 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 int defense(char team, string vessel_name, string shell_name)	//防守艦隊伍、防守艦名字、砲彈名字
 {
 	/*
-		先檢查有沒有這艘船艦，在檢查有沒有這個砲彈
-		return種類：
-		如果是正常防守，就回傳被刪掉的shell的index，其他情況則回傳-1
-		// j = 正常防守, -1 = 沒有這艘船, -2 = 沒有這個砲彈, -3 = 防守CD時間未到or防守距離不夠
+	先檢查有沒有這艘船艦，在檢查有沒有這個砲彈
+	return種類：
+	如果是正常防守，就回傳被刪掉的shell的index，其他情況則回傳-1
+	// j = 正常防守, -1 = 沒有這艘船, -2 = 沒有這個砲彈, -3 = 防守CD時間未到or防守距離不夠
 	*/
 	// 先查Vessel_vector裡有沒有(vessel_name)這個戰艦
 	for (int i = 0; i < Vessel_vector.size(); i++)
@@ -817,7 +820,8 @@ bool move(char team, string name, double speed, int angle) // 回傳是否找到
 	{
 		if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team)
 		{
-			getVessel = true;  p = i;
+			getVessel = true;  
+			p = i;
 		}
 
 		if (getVessel)

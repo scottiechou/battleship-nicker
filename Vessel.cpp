@@ -260,6 +260,22 @@ TK::TK()//新增功能
 	type = "TK";
 	angle = 0;
 }
+HERO::HERO()
+{
+	x = 0;
+	y = 0;
+	hp = 10;
+	maxSpeed = 20 / 60.0;
+	currentSpeed = 20 / 60.0;
+	atkRange = 10;
+	atkCD = 0;
+	defRange = 20;
+	defCD = 0;
+	weaponSpeed = (10 / 60.0);
+	weaponAtt = 5;
+	type = "HERO";
+	angle = 0;
+}
 // Shell的建構子
 Shell::Shell(string name, double x, double y, double destination_X, double destination_Y, double speed, double attack)
 {

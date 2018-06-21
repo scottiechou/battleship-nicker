@@ -334,22 +334,48 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 			// 將砲彈顯示在螢幕上
 			System::String ^vesselName_String, ^shellName_String;
 			vesselName_String = gcnew String(vesselName.c_str());
+			bool killer = false;
 			Char team_Char = team;
 			int fireSituation = fire(team, vesselName, x, y);
 			if (fireSituation >= 0)
 			{
-				shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
-				System::Windows::Forms::Label^ newShellLabel;
-				newShellLabel = gcnew System::Windows::Forms::Label();
-				//newShellLabel->BackColor = System::Drawing::Color::Yellow;
-				newShellLabel->ForeColor = System::Drawing::Color::Black;
-				newShellLabel->Location = System::Drawing::Point(10 + Vessel_vector[fireSituation].getX() * distance_untiy, 10 + Vessel_vector[fireSituation].getY() * distance_untiy);
-				newShellLabel->Text = "●" + shellName_String;
-				newShellLabel->AutoSize = true;
-				Shell_Label->Add(newShellLabel);
-				int lastShell = Shell_vector.size() - 1;
-				this->Controls->Add(Shell_Label[lastShell]);
+				
+					
+				if (Vessel_vector[fireSituation].getType() == "TK") {
+							 killer = true;
+							
+					}
+					
+				if (killer == false) {
+						shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
+						System::Windows::Forms::Label^ newShellLabel;
+						newShellLabel = gcnew System::Windows::Forms::Label();
+						//newShellLabel->BackColor = System::Drawing::Color::Yellow;
+						newShellLabel->ForeColor = System::Drawing::Color::Black;
+						newShellLabel->Location = System::Drawing::Point(10 + Vessel_vector[fireSituation].getX() * distance_untiy, 10 + Vessel_vector[fireSituation].getY() * distance_untiy);
+						newShellLabel->Text = "●" + shellName_String;
+						newShellLabel->AutoSize = true;
+						Shell_Label->Add(newShellLabel);
+						int lastShell = Shell_vector.size() - 1;
+						this->Controls->Add(Shell_Label[lastShell]);
+					}
+				else {
+						shellName_String = gcnew String(Vessel_vector[fireSituation].getName().c_str());
+						System::Windows::Forms::Label^ newShellLabel;
+						newShellLabel = gcnew System::Windows::Forms::Label();
+						//newShellLabel->BackColor = System::Drawing::Color::Yellow;
+						newShellLabel->ForeColor = System::Drawing::Color::Black;
+						newShellLabel->Location = System::Drawing::Point(10 + Vessel_vector[fireSituation].getX() * distance_untiy, 10 + Vessel_vector[fireSituation].getY() * distance_untiy);
+						newShellLabel->Text = "▲" + shellName_String;
+						newShellLabel->AutoSize = true;
+						Shell_Label->Add(newShellLabel);
+						int lastShell = Shell_vector.size() - 1;
+						this->Controls->Add(Shell_Label[lastShell]);
+						Vessel_vector.erase(Vessel_vector.begin() + fireSituation);//自殺
+						this->Controls->Remove(Vessel_Label[fireSituation]);
+						Vessel_Label->Remove(Vessel_Label[fireSituation]);
 
+					}
 				// Battle Log (戰鬥指令對應輸出)
 				if (log_line >= 25)
 				{
@@ -729,6 +755,8 @@ int fire(char team, string name, double x, double y)	//攻擊艦隊伍、攻擊�
 				pivot >> shell_name;
 				Shell newShell(shell_name, Vessel_vector[i].getX(), Vessel_vector[i].getY(), x, y, Vessel_vector[i].getWeaponSpeed(), Vessel_vector[i].getWeaponAtt());
 				Shell_vector.push_back(newShell);
+				if (Vessel_vector[i].getType() == "TK")
+					Vessel_vector[i].setHp(0.0);
 				return i;
 			}
 			else if (Vessel_vector[i].getAtkCD() != 0)	// 如果CD時間還沒到(不能發射)

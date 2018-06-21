@@ -62,10 +62,12 @@ namespace Project314
 		}
 
 		void commandOperation(string cmd, char team);
-
+		void writeLog(String^);// 是不是忘了打這一行?????????????????????????
+		
 	private: System::Windows::Forms::Label^  commands_text_title;	// 用於標示commands(指令輸入區)的文字方塊
 	private: System::Windows::Forms::TextBox^  commands_A;	// A組的指令輸入區
 	private: System::Windows::Forms::TextBox^  commands_B;	// B組的指令輸入區
+	private: System::Windows::Forms::TextBox^  commands_HERO;// 是不是忘了打這一行?????????????????????????
 	private: System::Windows::Forms::PictureBox^  pictureBox1;	// 用於在myForm.h中標記地圖大小，無意
 	private: System::Windows::Forms::Label^  battle_log_title;	// 戰鬥日誌標題
 	private: System::Windows::Forms::Label^  battle_log;		// 戰鬥日誌本文

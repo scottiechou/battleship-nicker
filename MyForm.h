@@ -532,6 +532,23 @@ namespace Project314
 			}
 			if (has_hero) //////////////////////////////////////////////////////////////////////////////////////
 			{
+				// 改顏色
+				switch (second % 4)
+				{
+				case 0:
+					hero_Label->ForeColor = System::Drawing::Color::Red;
+					break;
+				case 1:
+					hero_Label->ForeColor = System::Drawing::Color::Orange;
+					break;
+				case 2:
+					hero_Label->ForeColor = System::Drawing::Color::Green;
+					break;
+				case 3:
+					hero_Label->ForeColor = System::Drawing::Color::Blue;
+					break;
+				}
+				// 移動船艦
 				if (commands_HERO->Text->Length != 0)
 				{
 					hero_command = commands_HERO->Text[0];
@@ -624,6 +641,15 @@ namespace Project314
 						}
 						commands_HERO->Text = "";
 					}
+					// 邊界條件
+					if (hero.getX() < 0)
+						hero.setX(0);
+					if (hero.getX() > 19)
+						hero.setX(19);
+					if (hero.getY() < 0)
+						hero.setY(0);
+					if (hero.getY() > 19)
+						hero.setY(19);
 					hero_Label->Location = System::Drawing::Point(10 + hero.getX() * distance_untiy, 10 + hero.getY() * distance_untiy);
 				}
 			}

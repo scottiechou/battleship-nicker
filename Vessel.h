@@ -93,6 +93,11 @@ class TK : public Vessel {
 public:
 	TK();
 };
+class HERO : public Vessel
+{
+public:
+	HERO();
+};
 
 class Shell
 {

@@ -37,7 +37,23 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 		Min = "0" + Min;
 	if (Sec->Length < 2)
 		Sec = "0" + Sec;
-
+	
+	if (cmd == "GET HERO")
+	{
+		hero_Label->Location = System::Drawing::Point(10, 10);
+		this->Controls->Add(hero_Label);
+		hero_Label->Enabled = true;
+		has_hero = true;
+		return;
+	}
+	if (cmd == "KILL HERO")
+	{
+		this->Controls->Remove(hero_Label);
+		hero_Label->Enabled = false;
+		has_hero = false;
+		return;
+	}
+	
 	if (cmd[0] == '\n')
 	{
 		return;

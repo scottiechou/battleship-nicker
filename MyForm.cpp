@@ -503,15 +503,11 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 			{
 				if ('0' <= cmd[pointer] && cmd[pointer] <= '9')
 					tempS += cmd[pointer];
-				else
+				/*else
 				{
 					throw (cmd + " is invalid ,  your  angle is not a pure number.");
-				}
+				}*/
 				pointer++;
-
-				//避免沒東西 
-				if (pointer >= cmd.length())
-					throw(cmd + " is invalid , You forget your Speed and angle.");
 			}
 			angle = gcnew System::String(tempS.c_str());
 			tempS.clear();

@@ -52,7 +52,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 
 	if (cmd[pointer] == ' ') pointer++; //第一次遇到空白，處理指令型態
 
-	// 如果指令是SET
+										// 如果指令是SET
 	if (cmdType->ToUpper() == "SET")
 	{
 		try
@@ -143,7 +143,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 					}
 				}
 				//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
-				if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+				if (cmd[pointer] > '9' || cmd[pointer] < '0')
 				{
 					throw "Where is your y coordinate? Don't input anything except number.";
 				}
@@ -151,7 +151,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 				while (cmd[pointer] != ')')
 				{
 					//硬性規定(x,y)之間不能有任何符號 ( 3, 6 )<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
-					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
 						throw "Where is your y coordinate? Don't input anything except number.";
 					}
@@ -276,19 +276,20 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 					throw(cmd + " is invalid , you must forget common.");
 
 				//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
-				if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+				if (cmd[pointer] > '9' || cmd[pointer] < '0')
 				{
 					throw "Where is your x coordinate? Don't input anything except number.";
 				}
 
 				while (cmd[pointer] != ',')
 				{
-					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
 						throw ("Where is your x coordinate? Don't input anything except number.");
 					}
 					tempS += cmd[pointer];
 					pointer++;
+
 					//避免沒逗號
 					if (pointer >= cmd.length())
 						throw(cmd + " is invalid , you must forget common.");
@@ -310,7 +311,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 
 				while (cmd[pointer] != ')')
 				{
-					if (cmd[pointer] >= '9' || cmd[pointer] <= '0')
+					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
 						throw ("Where is your y coordinate? Don't input anything except number.");
 					}
@@ -320,7 +321,6 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 
 					if (pointer >= cmd.length())
 						throw(cmd + " is invalid , you must forget ).");
-					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
 
 				}
 
@@ -408,7 +408,6 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 				if (('a' <= cmd[pointer] && cmd[pointer] <= 'z') || ('A' <= cmd[pointer] && cmd[pointer] <= 'Z') || cmd[pointer] == '_' || ('0' <= cmd[pointer] && cmd[pointer] <= '9'))
 					shellName += cmd[pointer];
 				pointer++;
-				//避免沒東西
 			}
 			System::String ^vesselName_String, ^shellName_String;
 			vesselName_String = gcnew String(vesselName.c_str());
@@ -813,7 +812,7 @@ bool move(char team, string name, double speed, int angle) // 回傳是否找到
 	{
 		if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team)
 		{
-			getVessel = true;  
+			getVessel = true;
 			p = i;
 		}
 

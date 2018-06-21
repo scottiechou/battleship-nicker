@@ -15,6 +15,11 @@ static int log_line = 0;			// 戰鬥日誌的行數
 static vector<Vessel> Vessel_vector;// 儲存各式Vessel
 static vector<Shell> Shell_vector;	// 儲存各式Shell
 
+static HERO hero; //////////////////////////////////////////////////////////
+static char hero_command, shell_command; ///////////////////////////////////
+static bool has_hero = false; //////////////////////////////////////////////
+
+class HERO; ////////////////////////////////////////////////////////////////
 class Vessel;
 class Shell;
 
@@ -64,6 +69,7 @@ namespace Project314
 	private: System::Windows::Forms::PictureBox^  pictureBox1;	// 用於在myForm.h中標記地圖大小，無意
 	private: System::Windows::Forms::Label^  battle_log_title;	// 戰鬥日誌標題
 	private: System::Windows::Forms::Label^  battle_log;		// 戰鬥日誌本文
+	private: System::Windows::Forms::Label^ hero_Label;/////////////////////////////////////////////////
 	private: System::Windows::Forms::Button^  start_botton;	// 開始鍵
 	private: System::Windows::Forms::Button^  pause_botton;	// 暫停鍵
 	private: System::Windows::Forms::Timer^  game_timer;	// 計算時間
@@ -82,10 +88,12 @@ namespace Project314
 			this->commands_text_title = (gcnew System::Windows::Forms::Label());
 			this->commands_A = (gcnew System::Windows::Forms::TextBox());
 			this->commands_B = (gcnew System::Windows::Forms::TextBox());
+			this->commands_HERO = (gcnew System::Windows::Forms::TextBox());///////////////////////////////
 			this->battle_log_title = (gcnew System::Windows::Forms::Label());
 			this->start_botton = (gcnew System::Windows::Forms::Button());
 			this->pause_botton = (gcnew System::Windows::Forms::Button());
 			this->battle_log = (gcnew System::Windows::Forms::Label());
+			this->hero_Label = (gcnew System::Windows::Forms::Label());////////////////////////////////////
 			this->game_timer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->time = (gcnew System::Windows::Forms::Label());
 			this->Vessel_Label = gcnew List<System::Windows::Forms::Label^>;
@@ -128,6 +136,14 @@ namespace Project314
 			this->commands_B->Size = System::Drawing::Size(266, 198);
 			this->commands_B->TabIndex = 3;
 			// 
+			// commands_HREO ////////////////////////////////////////////////////
+			// 
+			this->commands_HERO->Location = System::Drawing::Point(1000, 500);
+			this->commands_HERO->Name = L"commands_HERO";
+			this->commands_HERO->Size = System::Drawing::Size(50, 150);
+			this->commands_HERO->Enabled = true;
+			this->commands_HERO->TabIndex = 9;
+			// 
 			// battle_log_title
 			// 
 			this->battle_log_title->AutoSize = true;
@@ -169,6 +185,16 @@ namespace Project314
 			this->battle_log->Name = L"battle_log";
 			this->battle_log->Size = System::Drawing::Size(0, 18);
 			this->battle_log->TabIndex = 7;
+			//
+			// hero_Label /////////////////////////////////////////////////////////////
+			//
+			this->hero_Label->AutoSize = true;
+			this->hero_Label->Font = (gcnew System::Drawing::Font(L"新細明體", 15));
+			this->hero_Label->Text = "★HERO";
+			this->hero_Label->BackColor = System::Drawing::Color::Transparent;
+			this->hero_Label->Name = L"hero_Label";
+			this->hero_Label->Enabled = false;
+			this->battle_log->TabIndex = 8;
 			// 
 			// game_timer
 			// 
@@ -199,6 +225,7 @@ namespace Project314
 			this->Controls->Add(this->commands_text_title);
 			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->commands_A);
+			this->Controls->Add(this->commands_HERO);
 			this->Name = L"MyForm";
 			this->Text = L"即時戰略遊戲FERTIG - 第14組";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
@@ -501,10 +528,104 @@ namespace Project314
 					Shell_Label->Remove(Shell_Label[i]);
 				}
 			}
-		}
-	private: System::Void commands_text_title_Click(System::Object^  sender, System::EventArgs^  e) {
-	}
-	public: void writeLog(String^ text);
+			if (has_hero) //////////////////////////////////////////////////////////////////////////////////////
+			{
+				if (commands_HERO->Text->Length != 0)
+				{
+					hero_command = commands_HERO->Text[0];
+					commands_HERO->Text = "";
+					if (hero_command == 'w')	//向上走
+					{
+						shell_command = 'w';
+						hero.setY(hero.getY() - hero.getSpeed());
+					}
+					else if (hero_command == 'd')	//右
+					{
+						shell_command = 'd';
+						hero.setX(hero.getX() + hero.getSpeed());
+					}
+					else if (hero_command == 's')	//下
+					{
+						shell_command = 's';
+						hero.setY(hero.getY() + hero.getSpeed());
+					}
+					else if (hero_command == 'a')	//左
+					{
+						shell_command = 'a';
+						hero.setX(hero.getX() - hero.getSpeed());
+					}
+					else if (hero_command == ' ')
+					{
+						string shell_name;
+						stringstream pivot;
+						pivot << "HERO_" << Shell_vector.size();
+						pivot >> shell_name;
+						if (shell_command == 'd')
+						{
+							Shell newShell(shell_name, hero.getX(), hero.getY(), hero.getX() + 10, hero.getY(), hero.getWeaponSpeed(), hero.getWeaponAtt());
+							Shell_vector.push_back(newShell);
+							System::String ^shellName_String;
+							System::Windows::Forms::Label^ newShellLabel;
+							shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
+							newShellLabel = gcnew System::Windows::Forms::Label();
+							newShellLabel->ForeColor = System::Drawing::Color::Black;
+							newShellLabel->Location = System::Drawing::Point(10 + hero.getX() * distance_untiy, 10 + hero.getY() * distance_untiy);
+							newShellLabel->Text = "●" + shellName_String;
+							newShellLabel->AutoSize = true;
+							Shell_Label->Add(newShellLabel);
+							this->Controls->Add(newShellLabel);
+						}
+						else if (shell_command == 'w')
+						{
+							Shell newShell(shell_name, hero.getX(), hero.getY(), hero.getX(), hero.getY() - 10, hero.getWeaponSpeed(), hero.getWeaponAtt());
+							Shell_vector.push_back(newShell);
+							System::String ^shellName_String;
+							System::Windows::Forms::Label^ newShellLabel;
+							shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
+							newShellLabel = gcnew System::Windows::Forms::Label();
+							newShellLabel->ForeColor = System::Drawing::Color::Black;
+							newShellLabel->Location = System::Drawing::Point(10 + hero.getX() * distance_untiy, 10 + hero.getY() * distance_untiy);
+							newShellLabel->Text = "●" + shellName_String;
+							newShellLabel->AutoSize = true;
+							Shell_Label->Add(newShellLabel);
+							this->Controls->Add(newShellLabel);
+						}
+						else if (shell_command == 's')
+						{
+							Shell newShell(shell_name, hero.getX(), hero.getY(), hero.getX(), hero.getY() + 10, hero.getWeaponSpeed(), hero.getWeaponAtt());
+							Shell_vector.push_back(newShell);
+							System::String ^shellName_String;
+							System::Windows::Forms::Label^ newShellLabel;
+							shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
+							newShellLabel = gcnew System::Windows::Forms::Label();
+							newShellLabel->ForeColor = System::Drawing::Color::Black;
+							newShellLabel->Location = System::Drawing::Point(10 + hero.getX() * distance_untiy, 10 + hero.getY() * distance_untiy);
+							newShellLabel->Text = "●" + shellName_String;
+							newShellLabel->AutoSize = true;
+							Shell_Label->Add(newShellLabel);
+							this->Controls->Add(newShellLabel);
+						}
+						else if (shell_command == 'a')
+						{
+							Shell newShell(shell_name, hero.getX(), hero.getY(), hero.getX() - 10, hero.getY(), hero.getWeaponSpeed(), hero.getWeaponAtt());
+							Shell_vector.push_back(newShell);
+							System::String ^shellName_String;
+							System::Windows::Forms::Label^ newShellLabel;
+							shellName_String = gcnew String(Shell_vector[Shell_vector.size() - 1].getName().c_str());
+							newShellLabel = gcnew System::Windows::Forms::Label();
+							newShellLabel->ForeColor = System::Drawing::Color::Black;
+							newShellLabel->Location = System::Drawing::Point(10 + hero.getX() * distance_untiy, 10 + hero.getY() * distance_untiy);
+							newShellLabel->Text = "●" + shellName_String;
+							newShellLabel->AutoSize = true;
+							Shell_Label->Add(newShellLabel);
+							this->Controls->Add(newShellLabel);
+						}
+						commands_HERO->Text = "";
+					}
+					hero_Label->Location = System::Drawing::Point(10 + hero.getX() * distance_untiy, 10 + hero.getY() * distance_untiy);
+				}
+			}
+		} ////////////////////////////////////////////////////////////////////////////////////////////////
 	};
 #pragma endregion
 }

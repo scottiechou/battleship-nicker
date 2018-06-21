@@ -22,7 +22,7 @@ bool set(char team, string name, string type, double x, double y);
 double distance(double x1, double y1, double x2, double y2);	//測量(x1, y1)與(x2, y2)距離
 int fire(char team, string name, double x, double y);
 int defense(char team, string vessel_name, string shell_name);
-int tag(char team, string old_name, string new_name)
+int tag(char team, string old_name, string new_name);
 bool move(char team, string name, double speed, int angle);
 
 namespace Project314
@@ -189,7 +189,7 @@ namespace Project314
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(9, 18);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1070, 535);
+			this->ClientSize = System::Drawing::Size(1370, 535);
 			this->Controls->Add(this->time);
 			this->Controls->Add(this->battle_log);
 			this->Controls->Add(this->start_botton);
@@ -390,60 +390,73 @@ namespace Project314
 				Vessel_Label[i]->Location = System::Drawing::Point(10 + Vessel_vector[i].getX() * distance_untiy, 10 + Vessel_vector[i].getY() * distance_untiy);
 			}
 
+			//處理砲彈
 			for (int i = 0; i < Shell_vector.size(); i++)
 			{
 				Shell_vector[i].moving();
 				Shell_Label[i]->Location = System::Drawing::Point(10 + Shell_vector[i].getX() * distance_untiy, 10 + Shell_vector[i].getY() * distance_untiy);
 
 				if (Shell_vector[i].getX() == Shell_vector[i].getDesX() &&
-					Shell_vector[i].getY() == Shell_vector[i].getDesY()) //到達目的
+					Shell_vector[i].getY() == Shell_vector[i].getDesY()) //到達目的地
 				{
+					// 輸出時間
+					System::String ^Min, ^Sec;	//將int(minute, second)轉成String(Min, Sec)
+					Min = System::Convert::ToString(minute);
+					Sec = System::Convert::ToString(second);
+					if (Min->Length < 2)
+						Min = "0" + Min;
+					if (Sec->Length < 2)
+						Sec = "0" + Sec;
 					bool hit = false;
+					// 擊中情形
 					for (unsigned int k = 0; k < Vessel_vector.size(); k++)
 					{
 						double dx = pow((Shell_vector[i].getX() - Vessel_vector[k].getX()), 2);
 						double dy = pow((Shell_vector[i].getY() - Vessel_vector[k].getY()), 2);
 						if (dx + dy <= 2.25) //半徑在1.5之內
 						{
+							battle_log->Text += ("[" + Min + ":" + Sec + "] ");
+							hit = true;
 							string success; //製造訊息
 							if (Shell_vector[i].getATK() >= Vessel_vector[k].getHp())//擊沉
 							{
-								success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + " and destroyed!");
+								success = (Vessel_vector[k].getName() + " is hit by " + Shell_vector[i].getName() + " and destroyed!");
 								String^ Success = gcnew System::String(success.c_str());
 								writeLog(Success);
-								Vessel_vector.erase(Vessel_vector.begin() + k);//從vector中清除
-								Shell_vector.erase(Shell_vector.begin() + k);
+								Vessel_vector.erase(Vessel_vector.begin() + k);//從vector中清除，下面兩行(427, 428)順序不能對調!!!!!
 								this->Controls->Remove(Vessel_Label[k]);
-								this->Controls->Remove(Shell_Label[i]);
+								Vessel_Label->Remove(Vessel_Label[k]);
 							}
 
 							else
 							{
 								Vessel_vector[k].setHp(Vessel_vector[k].getHp() - Shell_vector[i].getATK());
 								String^ value;
-								success = (Vessel_vector[k].getName() + "is hit by " + Shell_vector[i].getName() + "!\n"
+								success = (Vessel_vector[k].getName() + " is hit by " + Shell_vector[i].getName() + "! "
 									+ Vessel_vector[k].getName() + " get ");
 								String^Success = gcnew System::String(success.c_str());
 								value = System::Convert::ToString(Shell_vector[i].getATK());
-								Success += value + "damage!";
+								Success += value + " damage!";
 								writeLog(Success);
-								this->Controls->Remove(Shell_Label[i]);
 							}
 						}
 					}
 					if (!hit)
 					{
-						string success = (Shell_vector[i].getName() + "hit miss!");
+						battle_log->Text += ("[" + Min + ":" + Sec + "] ");
+						string success = (Shell_vector[i].getName() + " hit miss!");
 						String^ Success = gcnew System::String(success.c_str());
 						writeLog(Success);
-						this->Controls->Remove(Shell_Label[i]);
 					}
+					Shell_vector.erase(Shell_vector.begin() + i);
+					this->Controls->Remove(Shell_Label[i]);
+					Shell_Label->Remove(Shell_Label[i]);
 				}
 			}
 		}
 	private: System::Void commands_text_title_Click(System::Object^  sender, System::EventArgs^  e) {
 	}
-		 public: void writeLog(String^ text);
+	public: void writeLog(String^ text);
 	};
 #pragma endregion
 }

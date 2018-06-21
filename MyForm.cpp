@@ -721,6 +721,27 @@ bool set(char team, string name, string type, double x, double y)
 		Vessel_vector.push_back(newVessel);
 		return true;
 	}
+	else if (type == "TK") {//新增
+		int howManyCV = 0;
+		for (int i = 0; i < Vessel_vector.size(); i++) {
+			if (Vessel_vector[i].getName() == name && Vessel_vector[i].getTeam() == team) {
+				return false;
+			}
+			if (Vessel_vector[i].getType() == "CV")
+				howManyCV++;
+		}
+		if (howManyCV > 0) {
+			TK newVessel;
+			newVessel.setTeam(team);
+			newVessel.setName(name);
+			newVessel.setX(x);
+			newVessel.setY(y);
+			Vessel_vector.push_back(newVessel);
+			return true;
+		}
+		else
+			return false;
+	}
 	else {
 		return false;
 	}

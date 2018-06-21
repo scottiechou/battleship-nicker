@@ -246,6 +246,20 @@ DD::DD()
 	type = "DD";
 	angle = 0;
 }
+TK::TK()//新增功能
+{
+	hp = 2;
+	maxSpeed = 4.0 / 60.0;
+	currentSpeed = 0;
+	atkRange = 25;
+	atkCD = 0;
+	defRange = 0;
+	defCD = 0;
+	weaponSpeed = (6.0 / 60.0);
+	weaponAtt = 2;
+	type = "TK";
+	angle = 0;
+}
 // Shell的建構子
 Shell::Shell(string name, double x, double y, double destination_X, double destination_Y, double speed, double attack)
 {

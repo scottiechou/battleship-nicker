@@ -289,8 +289,8 @@ void Vessel::moving()
 	double xBound = x;
 	double yBound = y;
 
-	newX = currentSpeed * cos(angle / 180 * PI);
-	newY = currentSpeed * sin(angle / 180 * PI);
+	newX = currentSpeed * cos(angle * (PI / 180));
+	newY = currentSpeed * sin(angle * (PI / 180)) * (-1);	//我不知道為甚麼要乘-1
 
 	if (x + newX <= 0.0)
 	{

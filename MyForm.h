@@ -388,6 +388,54 @@ namespace Project314
 					Vessel_vector[i].setDefCD(Vessel_vector[i].getDefCD() - 1);
 				Vessel_vector[i].moving();//船艦移動
 				Vessel_Label[i]->Location = System::Drawing::Point(10 + Vessel_vector[i].getX() * distance_untiy, 10 + Vessel_vector[i].getY() * distance_untiy);
+			
+			        for (int k = 0; k < Vessel_vector.size(); k++)
+				{
+					if (k == i) continue;
+
+					bool crashed = false;
+					double dx = pow((Vessel_vector[k].getX() - Vessel_vector[i].getX()), 2);
+					double dy = pow((Vessel_vector[k].getX() - Vessel_vector[i].getY()), 2);
+
+					if (dx + dy <= 0.25 && //半徑在0.5內
+						(Vessel_vector[k].getSpeed() * 60.0 >= 1 || Vessel_vector[i].getSpeed() * 60.0 >= 1)) //且其中一方速度大於1
+					{
+						string  TeamA;
+						string  TeamB;
+						TeamA.push_back(Vessel_vector[k].getTeam());
+						TeamB.push_back(Vessel_vector[i].getTeam());
+						String^ VesselNameA = gcnew System::String((TeamA + ": " + Vessel_vector[i].getName()).c_str());
+						String^ VesselNameB = gcnew System::String((TeamB + ": " + Vessel_vector[k].getName()).c_str());
+
+						Vessel_vector[k].setHp(0);
+						Vessel_vector[i].setHp(0);
+						 //兩艘一起沉
+						if (log_line >= 25)
+						{
+							log_line = 0;
+							battle_log->ResetText();
+						}
+						battle_log->Text += "[" + Min + ":" + Sec + "] ";
+						battle_log->Text += "Team" + VesselNameA + "crashed with Team" + VesselNameB + "and destroyed!";
+						log_line++;
+
+						Vessel_vector.erase(Vessel_vector.begin() + k);//從vector中清除，下面兩行(427, 428)順序不能對調!!!!!
+						this->Controls->Remove(Vessel_Label[k]);
+
+						//沉另一艘
+						if (log_line >= 25)
+						{
+							log_line = 0;
+							battle_log->ResetText();
+						}
+						battle_log->Text += "[" + Min + ":" + Sec + "] ";
+						battle_log->Text += "Team" + VesselNameB + "crashed with Team " + VesselNameA + "and destroyed!";
+						log_line++;
+
+						Vessel_vector.erase(Vessel_vector.begin() + i);
+						this->Controls->Remove(Vessel_Label[i]);
+					}
+				}
 			}
 
 			//處理砲彈

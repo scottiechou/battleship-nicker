@@ -1,3 +1,2 @@
-# battleship-shit-posting
-stupid ass final project for motherfxckers.
-I really thinks this bullshit project is suck for everyone.Sorry for publicing this shit,because I have no fuxking money to use private file.
+# Finished final project
+I'll stop judging everything beacause the code is done.

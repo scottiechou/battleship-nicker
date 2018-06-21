@@ -42,6 +42,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 	{
 		return;
 	}
+
 	while (cmd[pointer] != ' ')
 	{
 		tempS += cmd[pointer];
@@ -116,7 +117,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 					//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖
 					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
-						throw "Where is your x coordinate? Don't input anything except number.";
+						throw (cmd + " is invaid.Where is your x coordinate? Don't input anything except number.");
 					}
 
 					tempS += cmd[pointer];
@@ -145,7 +146,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 				//硬性規定(x,y)之間不能有任何符號 ( 3, 6)<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
 				if (cmd[pointer] > '9' || cmd[pointer] < '0')
 				{
-					throw "Where is your y coordinate? Don't input anything except number.";
+					throw (cmd + " is invalid.Where is your y coordinate? Don't input anything except number.");
 				}
 
 				while (cmd[pointer] != ')')
@@ -153,7 +154,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 					//硬性規定(x,y)之間不能有任何符號 ( 3, 6 )<-不准許，誰准你亂加空白的? (3,6)好嗎?乖聽話
 					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
-						throw "Where is your y coordinate? Don't input anything except number.";
+						throw (cmd + "is invalid.Where is your y coordinate? Don't input anything except number.");
 					}
 
 					tempS += cmd[pointer];
@@ -285,7 +286,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 				{
 					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
-						throw ("Where is your x coordinate? Don't input anything except number.");
+						throw (cmd + "is invalid.Where is your x coordinate? Don't input anything except number.");
 					}
 					tempS += cmd[pointer];
 					pointer++;
@@ -313,7 +314,7 @@ void Project314::MyForm::commandOperation(string cmd, char team)
 				{
 					if (cmd[pointer] > '9' || cmd[pointer] < '0')
 					{
-						throw ("Where is your y coordinate? Don't input anything except number.");
+						throw (cmd + "is invalid.Where is your y coordinate? Don't input anything except number.");
 					}
 
 					tempS += cmd[pointer];
